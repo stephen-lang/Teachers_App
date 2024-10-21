@@ -7,6 +7,7 @@ import 'package:teacherapp_cleanarchitect/features/notes/domain/entities/notesEn
 abstract interface class NotesRemoteDataSources {
   Future<NotesModel>uploadNotes(NotesModel notes);
   Future<List<NotesModel>>downloadNotes(String posterId);
+  //most def
 }
 
 class NotesRemoteDataSourcesImpl implements NotesRemoteDataSources {
