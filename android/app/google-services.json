@@ -1,0 +1,144 @@
+{
+  "project_info": {
+    "project_number": "814102671681",
+    "firebase_url": "https://chat-project-3722e-default-rtdb.firebaseio.com",
+    "project_id": "chat-project-3722e",
+    "storage_bucket": "chat-project-3722e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:814102671681:android:434ad9c740ad72fc7e31c0",
+        "android_client_info": {
+          "package_name": "Lessonnote.g"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD916ZUj0zTocXq3NXHSYF_oRUXtXSajeU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:814102671681:android:e07e866779ffda037e31c0",
+        "android_client_info": {
+          "package_name": "Teachers.App"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD916ZUj0zTocXq3NXHSYF_oRUXtXSajeU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:814102671681:android:6b3a04128a25553a7e31c0",
+        "android_client_info": {
+          "package_name": "com.company.lessonnote"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD916ZUj0zTocXq3NXHSYF_oRUXtXSajeU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:814102671681:android:d3d3681b526a1d907e31c0",
+        "android_client_info": {
+          "package_name": "com.example.lessonnote"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD916ZUj0zTocXq3NXHSYF_oRUXtXSajeU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:814102671681:android:ded27622906efe187e31c0",
+        "android_client_info": {
+          "package_name": "com.example.schooltrial"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD916ZUj0zTocXq3NXHSYF_oRUXtXSajeU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:814102671681:android:39e6678e2c1b22bb7e31c0",
+        "android_client_info": {
+          "package_name": "com.example.teacherapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD916ZUj0zTocXq3NXHSYF_oRUXtXSajeU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:814102671681:android:66b48bb2672839f87e31c0",
+        "android_client_info": {
+          "package_name": "com.example.teacherapp_cleanarchitect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD916ZUj0zTocXq3NXHSYF_oRUXtXSajeU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyDHxctifmI-IuLhKUdZuWdtsbP2zy5eBis</string>
+	<key>GCM_SENDER_ID</key>
+	<string>814102671681</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.teacherappCleanarchitect</string>
+	<key>PROJECT_ID</key>
+	<string>chat-project-3722e</string>
+	<key>STORAGE_BUCKET</key>
+	<string>chat-project-3722e.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:814102671681:ios:b6b69be5d0d3aacd7e31c0</string>
+	<key>DATABASE_URL</key>
+	<string>https://chat-project-3722e-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>
