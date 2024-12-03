@@ -187,7 +187,7 @@ class _DashState extends State<Dash> {
                     ),
                     const SizedBox(height: 20),
                     Container(
-                      height: 400,
+                      height: 300,
                       margin: EdgeInsets.all(16),
                       padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -224,151 +224,131 @@ class _DashState extends State<Dash> {
                           // BlocBuilder for loading and displaying notes
                           BlocBuilder<NoteBloc, NoteState>(
                             builder: (context, state) {
-                              if (state is NoteLoading) {
-                                return const Center(
-                                    child: CircularProgressIndicator());
-                              } else if (state is NoteDisplaySuccess) {
-                                return Expanded(
-                                  child: SingleChildScrollView(
-                                    child: Column(
-                                      children: [
-                                        // Animated Chips with colored border and icon accent
-                                        Scrollbar(
-                                          // Add Scrollbar for the horizontal chip scroll
-                                          // Show scrollbar always (or use false for auto-hide)
-                                          thickness:
-                                              8.0, // Thickness of the scrollbar
-                                          radius: Radius.circular(
-                                              10), // Rounded corners for scrollbar
-                                          child: SingleChildScrollView(
-                                            scrollDirection: Axis.horizontal,
-                                            child: Wrap(
-                                              spacing: 8.0,
-                                              runSpacing: 4.0,
-                                              children: state.notes.map((note) {
-                                                final color =
-                                                    _getColorForSubject(
-                                                        note.Subject);
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: TweenAnimationBuilder(
-                                                    tween: ColorTween(
-                                                      begin: Colors.grey
-                                                          .shade300, // Start with neutral color
-                                                      end:
-                                                          color, // Transition to target color
-                                                    ),
-                                                    duration: const Duration(
-                                                        milliseconds:
-                                                            800), // Animation duration
-                                                    builder: (context,
-                                                        Color? animatedColor,
-                                                        child) {
-                                                      return Chip(
-                                                        label:
-                                                            Text(note.Subject),
-                                                        backgroundColor: Colors
-                                                            .white, // Neutral background
-                                                        shape: StadiumBorder(
-                                                          side: BorderSide(
-                                                            color:
-                                                                animatedColor!, // Animated border color
-                                                            width: 2,
-                                                          ),
-                                                        ),
-                                                        avatar: CircleAvatar(
-                                                          backgroundColor:
-                                                              animatedColor, // Small color indicator
-                                                          radius: 8,
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
-                                                );
-                                              }).toList(),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 10),
+                   if (state is NoteLoading) {
+  return const Center(child: CircularProgressIndicator());
+} else if (state is NoteDisplaySuccess) {
+  if (state.notes.isEmpty) {
+    // Case: No notes available for the user
+    return const Expanded(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.note_add,
+              size: 50,
+              color: Colors.black,
+            ),
+            SizedBox(height: 8),
+            Text(
+              "No notes found. Start creating your first note!",
+              style: TextStyle(fontSize: 16, color: Colors.black),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-                                        // Animated ListView.builder with fade-in and color transitions
-                                        Scrollbar(
-                                          // Add Scrollbar for the ListView
-                                          // Show scrollbar always (or use false for auto-hide)
-                                          thickness:
-                                              8.0, // Thickness of the scrollbar
-                                          radius: Radius.circular(
-                                              10), // Rounded corners for scrollbar
-                                          child: SizedBox(
-                                            height: 220,
-                                            child: ListView.builder(
-                                              itemCount: state.notes.length,
-                                              itemBuilder: (context, index) {
-                                                final note = state.notes[index];
-                                                final color =
-                                                    _getColorForSubject(
-                                                        note.Subject);
-                                                return TweenAnimationBuilder(
-                                                  tween: ColorTween(
-                                                    begin: Colors.grey
-                                                        .shade300, // Initial color
-                                                    end: color.withOpacity(
-                                                        0.2), // Target color with opacity
-                                                  ),
-                                                  duration: const Duration(
-                                                      milliseconds: 800),
-                                                  builder: (context,
-                                                      Color? tileColor, child) {
-                                                    return AnimatedOpacity(
-                                                      duration: const Duration(
-                                                          milliseconds: 800),
-                                                      opacity:
-                                                          1.0, // Fade-in effect
-                                                      child: Card(
-                                                        child: ListTile(
-                                                          title: Text(
-                                                              note.Subject),
-                                                          subtitle: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(note
-                                                                  .indicators),
-                                                              const SizedBox(
-                                                                  height:
-                                                                      10), // Spacing between indicators and updatedAt
-                                                              Text(
-                                                                "${DateFormat("d MMM, yyyy").format(note.updatedAt)}",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 12,
-                                                                  color: Colors
-                                                                      .grey, // Optional styling
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          tileColor: tileColor,
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                return const Center(
-                                  child: Text("An error has occurred"),
-                                );
-                              }
+  // Case: Notes available
+  return Expanded(
+    child: SingleChildScrollView(
+      child: Column(
+        children: [
+          Scrollbar(
+            thickness: 8.0,
+            radius: Radius.circular(10),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Wrap(
+                spacing: 8.0,
+                runSpacing: 4.0,
+                children: state.notes.map((note) {
+                  final color = _getColorForSubject(note.Subject);
+                  return Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: TweenAnimationBuilder(
+                      tween: ColorTween(
+                        begin: Colors.grey.shade300,
+                        end: color,
+                      ),
+                      duration: const Duration(milliseconds: 800),
+                      builder: (context, Color? animatedColor, child) {
+                        return Chip(
+                          label: Text(note.Subject),
+                          backgroundColor: Colors.white,
+                          shape: StadiumBorder(
+                            side: BorderSide(
+                              color: animatedColor!,
+                              width: 2,
+                            ),
+                          ),
+                          avatar: CircleAvatar(
+                            backgroundColor: animatedColor,
+                            radius: 8,
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Scrollbar(
+            thickness: 8.0,
+            radius: Radius.circular(10),
+            child: SizedBox(
+              height: 220,
+              child: ListView.builder(
+                itemCount: state.notes.length,
+                itemBuilder: (context, index) {
+                  final note = state.notes[index];
+                  final color = _getColorForSubject(note.Subject);
+                  return TweenAnimationBuilder(
+                    tween: ColorTween(
+                      begin: Colors.grey.shade300,
+                      end: color.withOpacity(0.2),
+                    ),
+                    duration: const Duration(milliseconds: 800),
+                    builder: (context, Color? tileColor, child) {
+                      return AnimatedOpacity(
+                        duration: const Duration(milliseconds: 800),
+                        opacity: 1.0,
+                        child: Card(
+                          child: ListTile(
+                            title: Text(note.Subject),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(note.indicators),
+                                const SizedBox(height: 10),
+                                Text(
+                                  "${DateFormat("d MMM, yyyy").format(note.updatedAt)}",
+                                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                            tileColor: tileColor,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+} else {
+  return const Center(child: Text("An error has occurred"));
+}
+
                             },
                           ),
                         ],

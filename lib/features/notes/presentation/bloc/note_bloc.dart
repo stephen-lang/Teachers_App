@@ -26,10 +26,16 @@ async {
     final result = await _getAllNotes.call(downloadNotesParams(posterId: event.posterId));
 
     result.fold(
-      (failure) => emit(Notefailure(message:failure.message)),
+      (failure) => emit(Notefailure(message:failure.message),),
       (notes) {
-        print(notes.first);
-        emit( NoteDisplaySuccess(notes: notes));},
+         if (notes.isEmpty) {
+        // Handle the case when there are no notes
+        emit(NoteDisplaySuccess(notes: []));  // Or emit another state like NoNotesState
+      } else {
+        print(notes.first);  // Safely print first note only if the list is not empty
+        emit(NoteDisplaySuccess(notes: notes));
+      }
+      },
     );
   }
 }

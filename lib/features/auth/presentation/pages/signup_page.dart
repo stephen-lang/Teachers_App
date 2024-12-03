@@ -4,6 +4,8 @@ import 'package:teacherapp_cleanarchitect/features/auth/presentation/components/
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../../notes/presentation/pages/home/dashboard.dart';
+
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
@@ -38,11 +40,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
   listener: (context, state) {
-    if (state is AuthSuccess) {
-      setState(() {
-        signUpRequired = false; // On success, remove loading indicator
-      });
-    } else if (state is AuthLoading) {
+    
+  if (state is AuthSuccess) {
+  // Use the user input directly for signup confirmation
+  final String usermate = nameController.text;  // This could be from user input or Auth data
+  setState(() {
+    /*ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Signup successful! Hurray, $usermate."),
+        backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 3),
+      ),
+    );*/
+    signUpRequired = false; // Hide loading indicator on success
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => Dash(userName: usermate),
+    ));
+  });
+}
+else if (state is AuthLoading) {
       setState(() {
         signUpRequired = true; // Show loading indicator while signing up
       });

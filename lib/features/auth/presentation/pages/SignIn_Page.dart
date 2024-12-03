@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:teacherapp_cleanarchitect/core/common/entities/user.dart';
+//import 'package:teacherapp_cleanarchitect/core/common/entities/user.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/components/my_text_field.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/home/dashboard.dart';
@@ -32,16 +32,25 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(listener: (context, state) {
       if (state is AuthSuccess) {
-        final String  userme= state.userme.displayName;
-       setState(() {
-          signInRequired = false;
-          //context.go('/dashboard');
-          _errorMsg = null; // Clear error message on success
-         Navigator.of(context).push(MaterialPageRoute(
-           builder: (context) =>   Dash(userName: userme,)
-         ));
-        });
-      } else if (state is AuthLoading) {
+  final String userme = state.userme.displayName;
+  setState(() {
+  /*  ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Sign in successful! Hurray, $userme."),
+        backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 3),
+      ),
+    );*/
+    signInRequired = false; // Hide loading indicator on success
+    _errorMsg = null; // Clear error message
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => Dash(userName: userme),
+    ));
+  });
+}
+
+ else if (state is AuthLoading) {
         setState(() {
           signInRequired = true;
           _errorMsg = null; // Clear any previous error messages during loading
