@@ -22,7 +22,7 @@ void main() async {
         create: (context) => serviceLocator<NoteBloc>(),
       ),
     ],
-    child: MyApp(),
+    child: const MyApp(),
   ));
 }
 
@@ -52,12 +52,42 @@ class _MyAppState extends State<MyApp> {
 
       // we register the block here
       // and add more blocks
+      home: BlocSelector<AppUserCubit, AppUserCubitState, String?>(
+       selector: (state) {
+    if (state is AppUserLoggedIn) {
+      return state.loggedInUserCred.displayName; // Assuming userName is a field in AppUserLoggedIn state
+    }
+    return null;
+  },
+  builder: (context, userName) {
+    if (userName != null) {
+      return Dash(userName: userName);  // Pass the username to Dash
+    }
+    return const WelcomeScreen();
+  },
+      ),
+    );
+  }
+}
+
+/*
+Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+
+      // we register the block here
+      // and add more blocks
       home: BlocSelector<AppUserCubit, AppUserCubitState, bool>(
         selector: (state) {
           return state is AppUserLoggedIn;
         },
         builder: (context, AuthIsUserLoggedIn) {
           if ( AuthIsUserLoggedIn) {
+            
             return const Dash()  ;
           }
           return const WelcomeScreen();
@@ -65,4 +95,4 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
-}
+  */

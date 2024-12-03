@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:teacherapp_cleanarchitect/core/common/entities/user.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/components/my_text_field.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/home/dashboard.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -19,8 +21,7 @@ class _SignInScreenState extends State<SignInScreen> {
   IconData iconPassword = CupertinoIcons.eye_fill;
   bool obscurePassword = true;
   String? _errorMsg;
-
-  @override
+   @override
   void dispose() {
     passwordController.dispose();
     emailController.dispose();
@@ -31,14 +32,15 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(listener: (context, state) {
       if (state is AuthSuccess) {
-       // setState(() {
+        final String  userme= state.userme.displayName;
+       setState(() {
           signInRequired = false;
-          //context.go('/dashboard')
+          //context.go('/dashboard');
           _errorMsg = null; // Clear error message on success
-         // Navigator.of(context).push(MaterialPageRoute(
-          //  builder: (context) => const NavigationMenu(),
-        //  ));
-      //  });
+         Navigator.of(context).push(MaterialPageRoute(
+           builder: (context) =>   Dash(userName: userme,)
+         ));
+        });
       } else if (state is AuthLoading) {
         setState(() {
           signInRequired = true;

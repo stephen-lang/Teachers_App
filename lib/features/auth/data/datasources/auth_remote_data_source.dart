@@ -24,6 +24,9 @@ abstract interface class AuthRemoteDataSource {
 
   get currentUserSession;
   Future<UserModel?> getCurrentUserData();
+
+  Future<void> signOut();
+  
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -159,5 +162,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } catch (e) {
       throw ServerException(message: e.toString());
     }
+  }
+  Future<void> signOut() async {
+    // Implement your sign-out logic here
+    // For example, if using Firebase:
+    await _firebaseAuth.signOut();
   }
 }

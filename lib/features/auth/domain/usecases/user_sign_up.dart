@@ -1,9 +1,9 @@
-import 'package:fpdart/src/either.dart';
+ 
 import 'package:teacherapp_cleanarchitect/core/error/failure.dart';
 import 'package:teacherapp_cleanarchitect/core/usecase/usecase.dart';
 import 'package:teacherapp_cleanarchitect/core/common/entities/user.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/domain/repository/auth_repository.dart';
-
+import 'package:fpdart/fpdart.dart';
 //usecases is a single file that does one job
 //they should have a particular stucture
 // it should return params

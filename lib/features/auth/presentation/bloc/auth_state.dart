@@ -16,3 +16,4 @@ final class AuthFailure extends AuthState {
 
   AuthFailure({required this.message});
 }
+class AuthSignedOut extends AuthState {}

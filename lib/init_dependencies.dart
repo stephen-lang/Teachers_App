@@ -7,6 +7,7 @@ import 'package:teacherapp_cleanarchitect/features/auth/data/datasources/auth_re
 import 'package:teacherapp_cleanarchitect/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/domain/repository/auth_repository.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/domain/usecases/current_user.dart';
+import 'package:teacherapp_cleanarchitect/features/auth/domain/usecases/signout_user.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/domain/usecases/user_login.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/domain/usecases/user_sign_up.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/bloc/auth_bloc.dart';
@@ -69,6 +70,12 @@ void initAuth() {
       serviceLocator(),
     ),
   );
+  // Signout uSER
+  serviceLocator.registerCachedFactory(
+    () => SignOutUseCase(
+      serviceLocator(),
+    ),
+  );
 
   // Register AuthBloc
   serviceLocator.registerFactory(
@@ -77,6 +84,7 @@ void initAuth() {
       userLogin: serviceLocator(),
       currentUser: serviceLocator(),
       appUserCubit: serviceLocator(),
+      signout_user: serviceLocator(),
     ),
   );
 }

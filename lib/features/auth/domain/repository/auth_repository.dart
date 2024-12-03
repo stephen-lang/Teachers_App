@@ -24,4 +24,5 @@ Future< Either<Failure, User>>loginWithEmailPassword({
   });
 
    Future<Either<Failure,User>> currentUser();
+  Future<Either<Failure, void>> signOut();
 } 

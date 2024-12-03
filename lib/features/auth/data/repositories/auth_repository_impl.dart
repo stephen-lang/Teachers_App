@@ -40,6 +40,21 @@ In your AuthRepositoryImpl class, you're correctly
     }
   }
 
+  
+  @override
+  Future<Either<Failure, void>> signOut() async {
+    try {
+      await remoteDataSource.signOut();
+      return right(null); // Sign-out successful, return void
+    } on ServerException catch (e) {
+      // Handle specific exceptions from the remote data source
+      return left(Failure(message: e.message)); // Return failure with message
+    } catch (e) {
+      // Handle any other exceptions
+      return left(Failure(message: 'An unexpected error occurred'));
+    }
+  }
+
   @override
   Future<Either<Failure, User>> signUpWithEmailPassword(
       {required String displayName,
