@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:teacherapp_cleanarchitect/core/common/cubits/app_user/app_user_cubit_cubit.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/pages/WelcomeScreen.dart';
@@ -7,9 +8,14 @@ import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/note_
 import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/home/dashboard.dart';
 import 'package:teacherapp_cleanarchitect/init_dependencies.dart';
 
+import 'features/notes/presentation/controllers/auth_controller.dart';
+import 'features/notes/presentation/pages/nav/nav_bar.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initDependecies();
+  Get.put(AuthController());
+
   runApp(MultiBlocProvider(
     providers: [
       BlocProvider(
@@ -62,7 +68,8 @@ class _MyAppState extends State<MyApp> {
   },
   builder: (context, userName) {
     if (userName != null) {
-      return Dash(userName: userName);  // Pass the username to Dash
+ return const NavigationMenu(); 
+     // return Dash(userName: userName);  // Pass the username to Dash
     }
     return const WelcomeScreen();
   },

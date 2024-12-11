@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
-import 'package:teacherapp_cleanarchitect/core/usecase/usecase.dart';
+//import 'package:teacherapp_cleanarchitect/core/usecase/usecase.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/domain/entities/notesEntity.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/domain/usecases/get_all_notes.dart';
  

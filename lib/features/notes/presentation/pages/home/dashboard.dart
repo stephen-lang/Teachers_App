@@ -2,12 +2,15 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:teacherapp_cleanarchitect/core/common/cubits/app_user/app_user_cubit_cubit.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/pages/WelcomeScreen.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/note_bloc.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/home/icons.dart';
+
+import '../../controllers/auth_controller.dart';
 
 class Dash extends StatefulWidget {
   final String userName;
@@ -92,19 +95,22 @@ class _DashState extends State<Dash> {
                   ],
                 ),
                 const SizedBox(height: 30),
-                Padding(
-                  padding: EdgeInsets.only(left: 3, bottom: 15),
-                  child: Text(
-                    "Hi ${widget.userName}",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1,
-                      wordSpacing: 2,
-                      color: Colors.white,
-                    ),
-                  ),
+              Padding(
+                  padding: const EdgeInsets.only(left: 3, bottom: 15),
+                  child: Obx(() {
+                    final userName = Get.find<AuthController>().userName.value;
+                    return Text(
+                      "Hi $userName", // Reactive username
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1,
+                        wordSpacing: 2,
+                        color: Colors.white,
+                      ),
+                    );
+                  }),
                 ),
                 Container(
                   margin: const EdgeInsets.only(top: 5, bottom: 20),
