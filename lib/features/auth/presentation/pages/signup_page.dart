@@ -4,7 +4,7 @@ import 'package:teacherapp_cleanarchitect/features/auth/presentation/components/
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../notes/presentation/pages/home/dashboard.dart';
+//import '../../../notes/presentation/pages/home/dashboard.dart';
 import '../../../notes/presentation/pages/nav/nav_bar.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -43,7 +43,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   listener: (context, state) {
     
   if (state is AuthSuccess) {
-        final String usermate = nameController.text;
+       // final String usermate = nameController.text;
         setState(() {
           signUpRequired = false;
           Navigator.of(context).push(MaterialPageRoute(

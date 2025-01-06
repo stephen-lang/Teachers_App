@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:get/get.dart';
+import 'package:teacherapp_cleanarchitect/Constants/const.dart';
 import 'package:teacherapp_cleanarchitect/core/common/cubits/app_user/app_user_cubit_cubit.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/pages/WelcomeScreen.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/note_bloc.dart';
-import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/home/dashboard.dart';
+//import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/home/dashboard.dart';
 import 'package:teacherapp_cleanarchitect/init_dependencies.dart';
 
 import 'features/notes/presentation/controllers/auth_controller.dart';
@@ -15,6 +17,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initDependecies();
   Get.put(AuthController());
+  Gemini.init(apiKey: GEMINI_API_KEY, enableDebugging: true);
 
   runApp(MultiBlocProvider(
     providers: [

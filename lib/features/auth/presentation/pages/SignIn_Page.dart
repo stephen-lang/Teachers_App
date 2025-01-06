@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 //import 'package:teacherapp_cleanarchitect/core/common/entities/user.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/components/my_text_field.dart';
-import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/home/dashboard.dart';
+//import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/home/dashboard.dart';
 
 import '../../../notes/presentation/controllers/auth_controller.dart';
 import '../../../notes/presentation/pages/nav/nav_bar.dart';

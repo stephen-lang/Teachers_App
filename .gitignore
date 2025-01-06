@@ -48,6 +48,10 @@ env/
 .pub-cache/
 .pub/
 /build/
+/Constants/
+/lib/Constants/
+
+
 
 
 
