@@ -22,38 +22,22 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  void dispose() {
+    tabController.dispose(); // ✅ Dispose controller
+    super.dispose();
+  }
+
+ @override
+Widget build(BuildContext context) {
+  return DefaultTabController( // ✅ Add this
+    length: 2,
+    child: Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SingleChildScrollView(
         child: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Stack(
             children: [
-              Align(
-                alignment: const AlignmentDirectional(20, -1.2),
-                child: Container(
-                  height: MediaQuery.of(context).size.width,
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Theme.of(context).colorScheme.tertiary),
-                ),
-              ),
-              Align(
-                alignment: const AlignmentDirectional(2.7, -1.2),
-                child: Container(
-                  height: MediaQuery.of(context).size.width / 1.3,
-                  width: MediaQuery.of(context).size.width / 1.3,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Theme.of(context).colorScheme.primary),
-                ),
-              ),
-              BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 100.0, sigmaY: 100.0),
-                child: Container(),
-              ),
               Align(
                   alignment: Alignment.center,
                   child: SizedBox(
@@ -62,7 +46,6 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 50.0),
                         child: TabBar(
-                          controller: tabController,
                           unselectedLabelColor: Theme.of(context)
                               .colorScheme
                               .onSurface
@@ -90,16 +73,17 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                           ],
                         ),
                       ),
-                      Expanded(
+                      const Expanded(
                           child: TabBarView(
-                              controller: tabController,
-                              children: const [SignInScreen(), SignUpScreen()]))
+                              children: [SignInScreen(), SignUpScreen()])),
                     ]),
                   )),
             ],
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

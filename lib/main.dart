@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:teacherapp_cleanarchitect/Constants/const.dart';
 import 'package:teacherapp_cleanarchitect/core/common/cubits/app_user/app_user_cubit_cubit.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/bloc/auth_bloc.dart';
+//import 'package:teacherapp_cleanarchitect/features/auth/presentation/pages/SignIn_Page.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/pages/WelcomeScreen.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/note_bloc.dart';
 //import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/home/dashboard.dart';

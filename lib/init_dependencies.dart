@@ -15,6 +15,7 @@ import 'package:teacherapp_cleanarchitect/features/notes/data/datasources/notes_
 import 'package:teacherapp_cleanarchitect/features/notes/data/repositories/notes_repository_impl.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/domain/repository/notes_repository.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/domain/usecases/get_all_notes.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/domain/usecases/upload_notes.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/note_bloc.dart';
 
 final serviceLocator = GetIt.instance;
@@ -104,18 +105,24 @@ void initNote() {
         remoteDataSource: serviceLocator(),
       ),
     )
-    //use case
+    //use case get all Notes
     ..registerFactory(
       () => GetAllNotes(
         serviceLocator(),
       ),
     )
-
+ //use case Upload Notes
+    ..registerFactory(
+      () => UploadNotes(
+        serviceLocator(),
+      ),
+    )
     //bloc
     //we use regitster lazy singleton because we want to maintain the state passed in to our bloc
     ..registerLazySingleton(
       () => NoteBloc(
         getAllNotes: serviceLocator(),
+        uploadNotes: serviceLocator()
       ),
     );
 }

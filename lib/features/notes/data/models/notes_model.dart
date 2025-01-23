@@ -2,13 +2,12 @@
 import 'package:teacherapp_cleanarchitect/features/notes/domain/entities/notesEntity.dart';
 
 class NotesModel extends Notesentity {
-  NotesModel({required super.noteId, required super.grade, required super.indicators, required super.contentStandard, required super.substrand, required super.strand, required super.classSize, required super.Subject, required super.posterId, required super.updatedAt});
+  NotesModel({required super.noteId, required super.grade, required super.indicators, required super.contentStandard, required super.substrand, required super.strand, required super.classSize, required super.Subject, required super.posterId, required super.updatedAt,super.lessonNote});
   Map<String, Object?> toDocument() {
     return {
     'noteId':noteId,
     'grade':grade,
     'indicators':indicators,
-    
     'contentStandard':contentStandard,
     'substrand':substrand,
     'strand':strand,
@@ -16,9 +15,24 @@ class NotesModel extends Notesentity {
     'subject':Subject,
     'posterId': posterId,
     'updatedAt': updatedAt.toIso8601String(), 
+    "lessonNote": lessonNote,
     };
   }
-
+ Map<String, dynamic> toJson() {
+    return {
+      "noteId": noteId,
+      "grade": grade,
+      "indicators": indicators,
+      "contentStandard": contentStandard,
+      "substrand": substrand,
+      "strand": strand,
+      'classSize':classSize,
+      "subject": Subject,
+      "posterId": posterId,
+      "updatedAt": updatedAt.toIso8601String(),
+      "lessonNote": lessonNote,
+    };
+  }
   static NotesModel fromEntity(entity) {
   // Adding error handling and default values
   return NotesModel(
@@ -32,6 +46,7 @@ class NotesModel extends Notesentity {
     Subject: entity.Subject.isNotEmpty ? entity.Subject : 'No subject provided', // Check for empty string
     posterId: entity.posterId.isNotEmpty ? entity.posterId : throw Exception('Poster ID is required'), // Require a posterId or throw error
     updatedAt: entity.updatedAt, // Default to current date if null
+    lessonNote: entity.lessonNote,
   );
 }
 
@@ -41,7 +56,6 @@ class NotesModel extends Notesentity {
     noteId:doc['noteId'],
     grade:doc['grade'],
     indicators:doc['indicators'],
-    
     contentStandard:doc['contentStandard'],
     substrand:doc['substrand'],
     strand:doc['strand'],
@@ -51,7 +65,7 @@ class NotesModel extends Notesentity {
     updatedAt: (doc['updatedAt'] != null && doc['updatedAt'] is Timestamp)
             ? (doc['updatedAt'] as Timestamp).toDate()
             : DateTime.now(), // Parse string back to DateTime
-    );
+    lessonNote: doc["lessonNote"],);
   }
 
   @override

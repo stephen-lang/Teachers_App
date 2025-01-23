@@ -12,6 +12,7 @@ abstract interface class NotesRemoteDataSources {
 
 class NotesRemoteDataSourcesImpl implements NotesRemoteDataSources {
   final FirebaseFirestore _firestore;
+  // ignore: unused_field
   final FirebaseAuth _firebaseAuth;
 
   NotesRemoteDataSourcesImpl(this._firebaseAuth, this._firestore) {
@@ -31,8 +32,7 @@ class NotesRemoteDataSourcesImpl implements NotesRemoteDataSources {
         // Map the result and cast to List<NotesModel>
         List<NotesModel> notesList = snapshot.docs.map((doc) {
           // Use the fromDocument method to parse the Firestore document into an entity
-          final Notesentity entity =
-              NotesModel.fromDocument(doc.data() as Map<String, dynamic>);
+          final Notesentity entity = NotesModel.fromDocument(doc.data() as Map<String, dynamic>);
 
           // Now convert the entity to a NotesModel using the fromEntity method
           return NotesModel.fromEntity(entity);
@@ -41,7 +41,7 @@ class NotesRemoteDataSourcesImpl implements NotesRemoteDataSources {
         return notesList;
         // print("Query Snapshot: ${notesList.length} docs found");
       } else {
-        print("No documents found for posterId: $posterId");
+        //print("No documents found for posterId: $posterId");
         return [];
       }
     } catch (e) {
@@ -52,21 +52,40 @@ class NotesRemoteDataSourcesImpl implements NotesRemoteDataSources {
   @override
   Future<NotesModel> uploadNotes(NotesModel notes) async {
     try {
-      User? currentUser = _firebaseAuth.currentUser;
-      if (currentUser == null) {
-        throw Exception("User not logged in");
+   
+ // Add the note to Firestore
+    DocumentReference documentRef = await _firestore.collection('notes').add({
+      
+      ...notes.toDocument(), // Convert NotesModel to a Firestore document
+    });
+
+    // Retrieve the uploaded document using the DocumentReference
+    DocumentSnapshot docSnapshot = await documentRef.get();
+
+    if (docSnapshot.exists) {
+      // Convert Firestore document back to NotesModel
+      Notesentity uploadedNotes = NotesModel.fromDocument(
+        docSnapshot.data() as Map<String, dynamic>,
+      );
+      return NotesModel.fromEntity(uploadedNotes);
+    } else {
+        print("No documents  submitted posterId");
+       return NotesModel(
+        noteId: 0,
+        grade: 0,
+        indicators: '',
+        contentStandard: '',
+        substrand: '',
+        strand: '',
+        classSize: 0,
+        Subject: '',
+        posterId: '',
+        updatedAt: DateTime.now(),
+        lessonNote: ''
+      );
       }
-
-      // Create a new document in the notes collection with the current user's UID
-      await _firestore.collection('notes').add({
-        'posterId': currentUser.uid,
-        ...notes
-            .toDocument(), // Using toDocument to convert the NotesModel to a Map
-      });
-
-      return notes; // Returning the uploaded note
     } catch (e) {
-      throw Exception("Failed to upload notes: $e");
+      throw ServerException(message: e.toString());
     }
   }
 }

@@ -60,7 +60,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ),
       },
       (user) =>
-          {print(user.uid), print(user.email), _emitAuthSuccess(user, emit)},
+          {print(user.uid), print(user.email), _emitAuthSignUpSuccess(user, emit)},
     );
   }
 
@@ -111,6 +111,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         (user) =>
             {print(user.uid), print(user.email), _emitAuthSuccess(user, emit)});
   }
+
+void _emitAuthSignUpSuccess(User user, Emitter<AuthState> emit) {
+  _appUserCubit.updateUser(user);
+  emit(AuthSignUpSuccess(userme: user)); // Emit the new state
+}
 
   void _emitAuthSuccess(
     User user,

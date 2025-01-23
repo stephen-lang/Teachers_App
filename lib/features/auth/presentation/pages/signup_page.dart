@@ -3,6 +3,7 @@ import 'package:teacherapp_cleanarchitect/features/auth/presentation/bloc/auth_b
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/components/my_text_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:teacherapp_cleanarchitect/features/auth/presentation/pages/SignIn_Page.dart';
 
 //import '../../../notes/presentation/pages/home/dashboard.dart';
 import '../../../notes/presentation/pages/nav/nav_bar.dart';
@@ -40,54 +41,57 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
-  listener: (context, state) {
-    
-  if (state is AuthSuccess) {
-       // final String usermate = nameController.text;
-        setState(() {
-          signUpRequired = false;
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => const NavigationMenu(),
-          ));
-        });
-      }
-else if (state is AuthLoading) {
-      setState(() {
-        signUpRequired = true; // Show loading indicator while signing up
-      });
-    } else if (state is AuthFailure) {
-      // Show error message in a SnackBar
-      ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-          content: Text(state.message), // Show the error message
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 3), // Duration for which SnackBar is shown
-          action: SnackBarAction(
-            label: 'Retry',
-            textColor: Colors.white,
-            onPressed: () {
-              // Allow user to retry the sign-up process
-              if (_formKey.currentState!.validate()) {
-                context.read<AuthBloc>().add(
-                  AuthSignUp(
-                    email: emailController.text,
-                    password: passwordController.text,
-                    displayName : nameController.text,
-                  ),
-                );
+      listener: (context, state) {
+        if (state is AuthSignUpSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("User signed up successfully"),
+              backgroundColor: Colors.green,
+            ),
+          );
 
-                // move to next page
-              }
-            },
-          ),
-        ),
-      );
+         /* Navigator.of(context).pushReplacement(
+    MaterialPageRoute(builder: (context) => const SignInScreen()),
+  );*/
+          DefaultTabController.of(context).animateTo(0);
+        } else if (state is AuthLoading) {
+          setState(() {
+            signUpRequired = true; // Show loading indicator while signing up
+          });
+        } else if (state is AuthFailure) {
+          // Show error message in a SnackBar
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message), // Show the error message
+              backgroundColor: Colors.red,
+              duration: const Duration(
+                  seconds: 3), // Duration for which SnackBar is shown
+              action: SnackBarAction(
+                label: 'Retry',
+                textColor: Colors.white,
+                onPressed: () {
+                  // Allow user to retry the sign-up process
+                  if (_formKey.currentState!.validate()) {
+                    context.read<AuthBloc>().add(
+                          AuthSignUp(
+                            email: emailController.text,
+                            password: passwordController.text,
+                            displayName: nameController.text,
+                          ),
+                        );
 
-      // Reset sign-up form after failure
-      setState(() {
-        signUpRequired = false; // Re-enable the form for retry
-      });
-    }
+                    // move to next page
+                  }
+                },
+              ),
+            ),
+          );
+
+          // Reset sign-up form after failure
+          setState(() {
+            signUpRequired = false; // Re-enable the form for retry
+          });
+        }
       },
       child: SingleChildScrollView(
         child: Form(
@@ -278,7 +282,7 @@ else if (state is AuthLoading) {
                                       AuthSignUp(
                                           email: emailController.text,
                                           password: passwordController.text,
-                                          displayName : nameController.text),
+                                          displayName: nameController.text),
                                     );
 
                                 /* setState(() {

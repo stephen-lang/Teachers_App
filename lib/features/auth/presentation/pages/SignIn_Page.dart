@@ -42,9 +42,11 @@ class _SignInScreenState extends State<SignInScreen> {
         setState(() {
           signInRequired = false;
           _errorMsg = null;
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => const NavigationMenu(),
-          ));
+          Navigator.of(context).pushAndRemoveUntil(
+  MaterialPageRoute(builder: (context) => const NavigationMenu()),
+  (route) => false, // Removes all previous routes
+);
+
         });
       }
 
@@ -61,7 +63,7 @@ class _SignInScreenState extends State<SignInScreen> {
             content: Text(
                 state.message), // Show the error message
             backgroundColor: Colors.red,
-          ));
+          ),);
         });
       }
     }, builder: (BuildContext context, AuthState state) {
