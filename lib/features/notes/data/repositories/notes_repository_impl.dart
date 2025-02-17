@@ -50,10 +50,27 @@ class NotesRepositoryImpl implements NotesRepository {
       );
        final notesUpload = await remoteDataSource.uploadNotes(notesentity);
       return Right(notesUpload);
-    } catch (e) {
-      throw Exception("Failed to upload notes: $e");
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
     }
   }
+@override
+Future<Either<Failure, void>> deleteNote({required String UniqueId}) async {
+  try {
+    // Call the remote data source to delete the note
+    await remoteDataSource.deleteNotes(UniqueId);
+
+    // If successful, return a success response
+    return right(null);
+  } on ServerException catch (e) {
+    // Handle and return a failure with the exception message
+    return left(Failure(message: e.message));
+  } catch (e) {
+    // Catch any other unexpected errors
+    return left(Failure(message: "An unexpected error occurred"));
+  }
+}
+
 
   }
   

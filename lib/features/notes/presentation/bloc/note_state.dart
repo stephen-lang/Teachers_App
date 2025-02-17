@@ -14,6 +14,7 @@ final class NoteUploadSuccess extends NoteState {
  
 }
 
+class NoteDeletedSucess extends NoteState {}
 
 
 final class NoteDisplaySuccess extends NoteState {

@@ -18,6 +18,8 @@ import 'package:teacherapp_cleanarchitect/features/notes/domain/usecases/get_all
 import 'package:teacherapp_cleanarchitect/features/notes/domain/usecases/upload_notes.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/note_bloc.dart';
 
+import 'features/notes/domain/usecases/delete_notes.dart';
+
 final serviceLocator = GetIt.instance;
 Future<void> initDependecies() async {
   await Firebase.initializeApp();
@@ -117,12 +119,19 @@ void initNote() {
         serviceLocator(),
       ),
     )
+     //use case Delete Notes
+    ..registerFactory(
+      () => DeleteNoteById(
+        serviceLocator(),
+      ),
+    )
     //bloc
     //we use regitster lazy singleton because we want to maintain the state passed in to our bloc
     ..registerLazySingleton(
       () => NoteBloc(
+        deleteNotes: serviceLocator(),
         getAllNotes: serviceLocator(),
-        uploadNotes: serviceLocator()
+        uploadNotes: serviceLocator() 
       ),
     );
 }

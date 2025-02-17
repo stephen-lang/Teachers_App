@@ -17,7 +17,7 @@ class UploadNotes implements UseCase<Notesentity,UploadNotesParam> {
 
 class UploadNotesParam {
   final String posterId;
-  final  int noteId;
+  final  String noteId;
   final   int grade;
   final  String indicators;
   final  String contentStandard;

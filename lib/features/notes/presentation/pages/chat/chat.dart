@@ -44,48 +44,60 @@ class _chatpageState extends State<chatpage> {
     );
   }
 
-  void _sendMessage(ChatMessage chatMessage) {
-    setState(() {
-      // this code adds the sender's message to the message list
-      messages = [chatMessage, ...messages];
-    });
-    try {
-      // question from our user
-      String question = chatMessage.text;
-      // give the question to gemini
-      gemini.streamGenerateContent(question).listen((event) {
-        // take the first message or nothing from the list of messages and give it to the last message
-        ChatMessage? lastMessage = messages.firstOrNull;
-        if (lastMessage != null && lastMessage.user == geminiUser) {
-          // if the last message is from Gemini
-          lastMessage = messages.removeAt(0);
-          String response = event.content?.parts?.fold(
-                  "", (previous, current) => "$previous ${current.text}") ??
-              "";
+ void _sendMessage(ChatMessage chatMessage) {
+  if (chatMessage.text.trim().isEmpty) return;
 
-          lastMessage.text += response;
-          setState(() {
-            messages = [lastMessage!, ...messages];
-          });
-        } else {
-          // if the last message is from the user
-          // response from Gemini below
-          String response = event.content?.parts?.fold(
-                  "", (previous, current) => "$previous ${current.text}") ??
-              "";
-          // create a new message below
-          ChatMessage message = ChatMessage(
-            user: geminiUser,
-            createdAt: DateTime.now(),
-            text: response,
-          );
-          setState(() {
-            messages = [message, ...messages];
-          });
-        }
+  setState(() {
+    // Add the sender's message to the message list
+    messages = [
+      ChatMessage(
+        user: chatMessage.user,
+        createdAt: chatMessage.createdAt,
+        text: chatMessage.text,
+      ),
+      ...messages,
+      ChatMessage(
+        user: geminiUser,
+        createdAt: DateTime.now(),
+        text: "Typing...",
+      ),
+    ];
+  });
+
+  try {
+    String question = chatMessage.text;
+
+    gemini.streamGenerateContent(question).listen((event) {
+      // Remove "Typing..." indicator
+      messages.removeWhere((msg) => msg.text == "Typing...");
+
+      String response = event.content?.parts?.fold(
+              "", (previous, current) => "$previous ${current.text}") ??
+          "";
+
+      ChatMessage message = ChatMessage(
+        user: geminiUser,
+        createdAt: DateTime.now(),
+        text: response,
+      );
+
+      setState(() {
+        messages = [message, ...messages];
       });
-    } catch (e) {
-      print(e);
-    }
+    });
+  } catch (e) {
+    print(e);
+    setState(() {
+      messages = [
+        ChatMessage(
+          user: geminiUser,
+          createdAt: DateTime.now(),
+          text: "Sorry, something went wrong. Please try again later.",
+        ),
+        ...messages,
+      ];
+    });
   }
+}
+
 }

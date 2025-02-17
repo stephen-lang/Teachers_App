@@ -24,7 +24,7 @@ class _SinglePageState extends State<SinglePage> {
   final TextEditingController contentstandard = TextEditingController();
   final TextEditingController substrand = TextEditingController();
   final TextEditingController strand = TextEditingController();
-  final TextEditingController noteId = TextEditingController();
+ // final TextEditingController noteId = TextEditingController();
   final TextEditingController classSize = TextEditingController();
   final TextEditingController Subject = TextEditingController();
   // final TextEditingController updatedAt = TextEditingController();
@@ -46,7 +46,7 @@ class _SinglePageState extends State<SinglePage> {
     // lessonNote: ;
     try {
       input1 = int.tryParse(grade.text.trim());
-      input6 = int.tryParse(noteId.text.trim());
+     // input6 = int.tryParse(noteId.text.trim());
       input7 = int.tryParse(classSize.text.trim());
 
       if (input6 == null || input7 == null || input1 == null) {
@@ -78,8 +78,7 @@ class _SinglePageState extends State<SinglePage> {
         - **Content Standard:** $input3
         - **Sub-Strand:** $input4
         - **Strand:** $input5
-        - ** noteId: ** $input6
-        - ** ClassSize: ** $input7
+         - ** ClassSize: ** $input7
         - ** Subject: ** $input8
         - ** 
         The lesson note should be in the following format:
@@ -190,7 +189,7 @@ class _SinglePageState extends State<SinglePage> {
               _buildTextField(strand, 'Strand', Icons.linear_scale),
             ]),
             _buildSection('Identifiers', [
-              _buildTextField(noteId, 'Note ID', Icons.numbers),
+              //_buildTextField(noteId, 'Note ID', Icons.numbers),
               _buildTextField(classSize, 'Class Size', Icons.people),
             ]),
           ],
@@ -236,8 +235,10 @@ class _SinglePageState extends State<SinglePage> {
       return '$fieldName cannot be empty';
     }
     if ((fieldName == 'Grade' ||
-            fieldName == 'ClassSize' ||
-            fieldName == 'noteId') &&
+            fieldName == 'ClassSize'
+            
+          //  || fieldName == 'noteId'
+          ) &&
         int.tryParse(value.trim()) == null) {
       return '$fieldName must be a valid number';
     }
@@ -308,8 +309,8 @@ class _SinglePageState extends State<SinglePage> {
                           // Prepare data to pass into the event
                           final gradevalue =
                               int.tryParse(grade.text.trim()) ?? 0;
-                          final noteIdValue =
-                              int.tryParse(noteId.text.trim()) ?? 0;
+                         // final noteIdValue =
+                             // int.tryParse(noteId.text.trim()) ?? 0;
                           final classSizeValue =
                               int.tryParse(classSize.text.trim()) ?? 0;
                           final lessonNote = cleanedResponse;
@@ -326,7 +327,7 @@ class _SinglePageState extends State<SinglePage> {
                           context.read<NoteBloc>().add(
                                 NotesUploadNotes(
                                   posterId: posterId,
-                                  noteId: noteIdValue,
+                                  noteId:  '',
                                   grade: gradevalue,
                                   indicators: indicators.text.trim(),
                                   contentStandard: contentstandard.text.trim(),
@@ -354,7 +355,7 @@ class _SinglePageState extends State<SinglePage> {
                             contentstandard.clear();
                             substrand.clear();
                             strand.clear();
-                            noteId.clear();
+                           // noteId.clear();
                             classSize.clear();
                             Subject.clear();
                           });

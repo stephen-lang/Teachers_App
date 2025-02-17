@@ -82,7 +82,7 @@ flutter:
    
 
   assets:
-    - assets/images/chatbot.png
+    - assets/images/chatbot.PNG
  
 
   # An image asset can refer to one or more resolution-specific "variants", see

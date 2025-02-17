@@ -1,6 +1,6 @@
 
 class Notesentity {
-  int noteId;
+  String noteId;
   int grade;
   String indicators;
   String contentStandard;

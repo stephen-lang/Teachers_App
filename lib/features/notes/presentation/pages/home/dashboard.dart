@@ -178,7 +178,15 @@ class _DashState extends State<Dash> {
                 },
                 itemBuilder: (context) => [
                   const PopupMenuItem(value: "Edit", child: Text("Edit")),
-                  const PopupMenuItem(value: "Delete", child: Text("Delete")),
+                  PopupMenuItem(
+                    value: "Delete",
+                    child: IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () {
+                        _deleteLesson(note);
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -218,7 +226,27 @@ class _DashState extends State<Dash> {
   }
 
   void _deleteLesson(note) {
-    // Implement delete functionality
+    final uniqueNoteId = note.noteId; // Assuming the note object has `uniqueId`
+
+    // Trigger Note Delete Bloc Event
+    context.read<NoteBloc>().add(NoteDeleteNotes(UniqueId: uniqueNoteId));
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Deleting Note: ${note.indicators}')),
+    );
+    BlocListener<NoteBloc, NoteState>(
+      listener: (context, state) {
+        if (state is NoteDeletedSucess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Note deleted successfully')),
+          );
+        } else if (state is Notefailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error deleting note: ${state.message}')),
+          );
+        }
+      },
+    );
   }
 
   void _addNewLesson() {
@@ -231,32 +259,37 @@ class _DashState extends State<Dash> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Lesson"),
+          title: const Text("Lesson"),
           content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 10),
-                Text("Grade: ${note.grade}"),
-                Text("Subject: ${note.Subject}"),
-                Text(
-                    "Updated: ${DateFormat("d MMM, yyyy").format(note.updatedAt)}"),
-                Text("AI Generated Lesson:",
-                    style: Theme.of(context).textTheme.titleLarge),
-                Text(note.lessonNote),
-                const SizedBox(height: 10),
-                Text("Created By:",
-                    style: Theme.of(context).textTheme.titleMedium),
-                Text(userName),
-              ],
-            ),
-          ),
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 10),
+              Text("Grade: ${note.grade ?? 'N/A'}"), // Null safety check
+              Text("Subject: ${note.Subject ?? 'N/A'}"), // Null safety check
+              Text(
+                "Updated: ${note.updatedAt != null ? DateFormat("d MMM, yyyy").format(note.updatedAt) : 'N/A'}",
+              ),
+              Text(
+                "AI Generated Lesson:",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              Text(note.lessonNote ??
+                  'No lesson available'), // Handle missing data
+              const SizedBox(height: 10),
+              Text(
+                "Created By:",
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              Text(userName ?? 'Unknown User'), // Fallback for missing userName
+            ],
+          )),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text("Close"),
             ),
-               const SizedBox(width: 70),
+            const SizedBox(width: 70),
             ElevatedButton.icon(
               onPressed: () {
                 // Combine all information into a single string

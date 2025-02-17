@@ -11,7 +11,7 @@ final String posterId;
 
 final class NotesUploadNotes extends NoteEvent {
  final String posterId;
-  final  int noteId;
+  final  String noteId;
   final   int grade;
   final  String indicators;
   final  String contentStandard;
@@ -25,4 +25,9 @@ final class NotesUploadNotes extends NoteEvent {
   NotesUploadNotes({required this.posterId, required this.noteId, required this.grade, required this.indicators, required this.contentStandard, required this.substrand, required this.strand, required this.classSize, required this.Subject,   required this.updatedAt, required this.lessonNote});
 
 
+}
+final class NoteDeleteNotes extends NoteEvent{
+  final String UniqueId;
+
+  NoteDeleteNotes({required this.UniqueId});
 }

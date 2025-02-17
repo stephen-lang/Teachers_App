@@ -1,3 +1,4 @@
+
 import 'package:fpdart/fpdart.dart';
 import 'package:teacherapp_cleanarchitect/core/error/failure.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/domain/entities/notesEntity.dart';
@@ -20,4 +21,7 @@ abstract interface class NotesRepository {
     required updatedAt,
     lessonNote,
   });
+
+   Future<Either<Failure,void>> deleteNote({required String UniqueId});
+
 }

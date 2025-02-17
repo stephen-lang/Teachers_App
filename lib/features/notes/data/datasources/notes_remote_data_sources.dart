@@ -7,6 +7,7 @@ import 'package:teacherapp_cleanarchitect/features/notes/domain/entities/notesEn
 abstract interface class NotesRemoteDataSources {
   Future<NotesModel> uploadNotes(NotesModel notes);
   Future<List<NotesModel>> downloadNotes(String posterId);
+   Future<void> deleteNotes(String noteId);
   //most def read
 }
 
@@ -49,17 +50,19 @@ class NotesRemoteDataSourcesImpl implements NotesRemoteDataSources {
     }
   }
 
-  @override
-  Future<NotesModel> uploadNotes(NotesModel notes) async {
-    try {
-   
- // Add the note to Firestore
-    DocumentReference documentRef = await _firestore.collection('notes').add({
-      
-      ...notes.toDocument(), // Convert NotesModel to a Firestore document
-    });
+@override
+Future<NotesModel> uploadNotes(NotesModel notes) async {
+  try {
+    // Create a new document reference with a Firestore-generated ID
+    DocumentReference documentRef = _firestore.collection('notes').doc();
 
-    // Retrieve the uploaded document using the DocumentReference
+    // Attach Firestore-generated ID as noteId
+    NotesModel updatedNotes = notes.copyWith(noteId: documentRef.id);
+
+    // Save the note to Firestore with the new noteId
+    await documentRef.set(updatedNotes.toDocument());
+
+    // Retrieve the saved document
     DocumentSnapshot docSnapshot = await documentRef.get();
 
     if (docSnapshot.exists) {
@@ -69,9 +72,9 @@ class NotesRemoteDataSourcesImpl implements NotesRemoteDataSources {
       );
       return NotesModel.fromEntity(uploadedNotes);
     } else {
-        print("No documents  submitted posterId");
-       return NotesModel(
-        noteId: 0,
+      print("No document found after submission.");
+      return NotesModel(
+        noteId: '',
         grade: 0,
         indicators: '',
         contentStandard: '',
@@ -81,10 +84,20 @@ class NotesRemoteDataSourcesImpl implements NotesRemoteDataSources {
         Subject: '',
         posterId: '',
         updatedAt: DateTime.now(),
-        lessonNote: ''
+        lessonNote: '',
       );
-      }
-    } catch (e) {
+    }
+  } catch (e) {
+    throw ServerException(message: e.toString());
+  }
+}
+
+  
+  @override
+  Future<void> deleteNotes(String UniqueId) async{
+   try {
+      await _firestore.collection('notes').doc(UniqueId).delete();
+     } catch (e) {
       throw ServerException(message: e.toString());
     }
   }

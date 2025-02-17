@@ -18,6 +18,35 @@ class NotesModel extends Notesentity {
     "lessonNote": lessonNote,
     };
   }
+
+  NotesModel copyWith({
+  String? noteId,
+  int? grade,
+  String? indicators,
+  String? contentStandard,
+  String? substrand,
+  String? strand,
+  int? classSize,
+  String? Subject,
+  String? posterId,
+  DateTime? updatedAt,
+  String? lessonNote,
+}) {
+  return NotesModel(
+    noteId: noteId ?? this.noteId,
+    grade: grade ?? this.grade,
+    indicators: indicators ?? this.indicators,
+    contentStandard: contentStandard ?? this.contentStandard,
+    substrand: substrand ?? this.substrand,
+    strand: strand ?? this.strand,
+    classSize: classSize ?? this.classSize,
+    Subject: Subject ?? this.Subject,
+    posterId: posterId ?? this.posterId,
+    updatedAt: updatedAt ?? this.updatedAt,
+    lessonNote: lessonNote ?? this.lessonNote,
+  );
+}
+
  Map<String, dynamic> toJson() {
     return {
       "noteId": noteId,

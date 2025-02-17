@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:teacherapp_cleanarchitect/core/usecase/usecase.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/domain/entities/notesEntity.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/domain/usecases/delete_notes.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/domain/usecases/get_all_notes.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/domain/usecases/upload_notes.dart';
 
@@ -10,17 +11,36 @@ part 'note_state.dart';
 class NoteBloc extends Bloc<NoteEvent, NoteState> {
   final GetAllNotes _getAllNotes;
   final UploadNotes _uploadNotes;
+  final  DeleteNoteById _deleteNoteById;
 
   NoteBloc({
+    required DeleteNoteById deleteNotes,
     required GetAllNotes getAllNotes,
     required UploadNotes uploadNotes,
   })  : _getAllNotes = getAllNotes,
         _uploadNotes = uploadNotes,
+        _deleteNoteById =deleteNotes,
         super(NoteInitial()) {
     on<NotesFetchAllNotes>(_onNoteDownload);
     on<NotesUploadNotes>(_onNoteUpload);
+    on<NoteDeleteNotes>(_onNoteDelete);
   }
 
+Future<void> _onNoteDelete(
+ NoteDeleteNotes event,
+    Emitter<NoteState> emit,
+)async{
+ emit(NoteLoading());
+
+    final result = await _deleteNoteById.call(DeleteNotesParams(UniqueId: event.UniqueId))      ; // Execute use case
+
+    result.fold(
+      (failure) => emit(
+        Notefailure(message: failure.message)
+        ), // Handle failure
+      (_) => emit(NoteDeletedSucess()), // Emit success state
+
+);}
   // Handler for uploading notes
   Future<void> _onNoteUpload(
     NotesUploadNotes event,
