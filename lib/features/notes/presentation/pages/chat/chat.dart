@@ -3,7 +3,7 @@ import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 
 class chatpage extends StatefulWidget {
-  chatpage({super.key});
+  const chatpage({super.key});
   static String routeName = '/chatpage';
   @override
   State<chatpage> createState() => _chatpageState();
@@ -48,32 +48,29 @@ class _chatpageState extends State<chatpage> {
   if (chatMessage.text.trim().isEmpty) return;
 
   setState(() {
-    // Add the sender's message to the message list
     messages = [
-      ChatMessage(
-        user: chatMessage.user,
-        createdAt: chatMessage.createdAt,
-        text: chatMessage.text,
-      ),
-      ...messages,
+      chatMessage,
       ChatMessage(
         user: geminiUser,
         createdAt: DateTime.now(),
         text: "Typing...",
       ),
+      ...messages,
     ];
   });
 
   try {
     String question = chatMessage.text;
 
-    gemini.streamGenerateContent(question).listen((event) {
-      // Remove "Typing..." indicator
+    gemini.streamGenerateContent(question,
+      modelName: 'gemini-2.0-flash',
+    ).listen((event) {
       messages.removeWhere((msg) => msg.text == "Typing...");
 
-      String response = event.content?.parts?.fold(
-              "", (previous, current) => "$previous ${current.text}") ??
-          "";
+      String response = event.content?.parts
+    ?.whereType<TextPart>() // ✅ Filter only TextPart objects
+    .map((part) => part.text) // ✅ Now safely access 'text'
+    .join(" ") ?? "Sorry, I couldn't generate a response.";
 
       ChatMessage message = ChatMessage(
         user: geminiUser,
@@ -99,5 +96,6 @@ class _chatpageState extends State<chatpage> {
     });
   }
 }
+
 
 }

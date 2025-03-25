@@ -10,7 +10,7 @@ List catNames=[
 
 List <Color> catcolors=[
 
-  Color(0xFFFFFCF2F),
+  const Color(0xfffffcf2f),
   Colors.green,
   Colors.blue,
   const Color.fromARGB(255, 109, 56, 52)
@@ -18,8 +18,8 @@ List <Color> catcolors=[
 ];
 
 List <Icon> caticons=[
- Icon(Icons.add_comment, color: Colors.white, size: 20,),
- Icon(Icons.assignment , color: Colors.white, size: 20,),
- Icon(Icons.play_lesson , color: Colors.white,size: 20,),
- Icon(Icons.view_agenda , color: Colors.white, size: 20)
+ const Icon(Icons.add_comment, color: Colors.white, size: 20,),
+ const Icon(Icons.assignment , color: Colors.white, size: 20,),
+ const Icon(Icons.play_lesson , color: Colors.white,size: 20,),
+ const Icon(Icons.view_agenda , color: Colors.white, size: 20)
 ];

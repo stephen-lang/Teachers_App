@@ -3,22 +3,22 @@ import 'package:intl/intl.dart';
 
 class NoteItem extends StatefulWidget {
   final note;
-
   final Color color;
   final Function onEdit;
   final Function onDelete;
   final Function onShowPopup;
 
   const NoteItem({
-    Key? key,
+    super.key,
     required this.note,
     required this.color,
     required this.onEdit,
     required this.onDelete,
     required this.onShowPopup,
-  }) : super(key: key);
+  });
 
   @override
+  // ignore: library_private_types_in_public_api
   _NoteItemState createState() => _NoteItemState();
 }
 

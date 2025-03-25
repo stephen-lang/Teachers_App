@@ -1,9 +1,6 @@
-import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/home/dashboard.dart';
 
-import '../../controllers/auth_controller.dart';
 import 'NavigationController.dart';
 
 class NavigationMenu extends StatelessWidget {

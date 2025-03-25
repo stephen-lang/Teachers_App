@@ -14,7 +14,9 @@ import 'package:teacherapp_cleanarchitect/features/auth/presentation/bloc/auth_b
 import 'package:teacherapp_cleanarchitect/features/notes/data/datasources/notes_remote_data_sources.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/data/repositories/notes_repository_impl.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/domain/repository/notes_repository.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/domain/usecases/download_PDF_notes.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/domain/usecases/get_all_notes.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/domain/usecases/uploadPDF_notes.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/domain/usecases/upload_notes.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/note_bloc.dart';
 
@@ -119,9 +121,21 @@ void initNote() {
         serviceLocator(),
       ),
     )
+    //use case UploadPDF Notes
+    ..registerFactory(
+      () =>  UploadPDFNotes(
+        serviceLocator(),
+      ),
+    )
      //use case Delete Notes
     ..registerFactory(
       () => DeleteNoteById(
+        serviceLocator(),
+      ),
+    )
+      //use case Delete Notes
+    ..registerFactory(
+      () =>  GetPDFNotes(
         serviceLocator(),
       ),
     )
@@ -131,7 +145,9 @@ void initNote() {
       () => NoteBloc(
         deleteNotes: serviceLocator(),
         getAllNotes: serviceLocator(),
-        uploadNotes: serviceLocator() 
+        uploadNotes: serviceLocator(), 
+        uploadPDFnotes: serviceLocator(), 
+        GetPDFNotes: serviceLocator(),
       ),
     );
 }

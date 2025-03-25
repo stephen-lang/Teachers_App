@@ -17,6 +17,17 @@ final class NoteUploadSuccess extends NoteState {
 class NoteDeletedSucess extends NoteState {}
 
 
+
+//
+final class PDFNoteDisplaySuccess extends NoteState {
+final List<notespdfEntity> pdfnote;
+
+  PDFNoteDisplaySuccess({required this.pdfnote});
+
+}
+
+
+
 final class NoteDisplaySuccess extends NoteState {
 final List<Notesentity> notes;
 

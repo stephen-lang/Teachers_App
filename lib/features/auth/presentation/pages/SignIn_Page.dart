@@ -37,7 +37,7 @@ class _SignInScreenState extends State<SignInScreen> {
     return BlocConsumer<AuthBloc, AuthState>(listener: (context, state) {
       if (state is AuthSuccess) {
         final String userme = state.userme.displayName;
-        print("Login Successful - Updating username to: ${userme}");
+        print("Login Successful - Updating username to: $userme");
   Get.find<AuthController>().updateUserName(userme);
         setState(() {
           signInRequired = false;

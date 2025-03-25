@@ -225,29 +225,43 @@ class _DashState extends State<Dash> {
     );
   }
 
-  void _deleteLesson(note) {
-    final uniqueNoteId = note.noteId; // Assuming the note object has `uniqueId`
+ void _deleteLesson(note) {
+  final uniqueNoteId = note.noteId; // Assuming the note object has `uniqueId`
 
-    // Trigger Note Delete Bloc Event
-    context.read<NoteBloc>().add(NoteDeleteNotes(UniqueId: uniqueNoteId));
+  // Trigger Note Delete Bloc Event
+  context.read<NoteBloc>().add(NoteDeleteNotes(UniqueId: uniqueNoteId));
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Deleting Note: ${note.indicators}')),
-    );
-    BlocListener<NoteBloc, NoteState>(
-      listener: (context, state) {
-        if (state is NoteDeletedSucess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Note deleted successfully')),
-          );
-        } else if (state is Notefailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error deleting note: ${state.message}')),
-          );
-        }
-      },
-    );
-  }
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text('Deleting Note: ${note.indicators}')),
+  );
+
+  // ✅ Listen for changes and refresh UI only if the widget is still mounted
+  final subscription = context.read<NoteBloc>().stream.listen((state) {
+    if (!mounted) return; // ✅ Prevents updates if the widget is gone
+
+    if (state is NoteDeletedSucess) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Note deleted successfully')),
+      );
+
+      // ✅ Fetch updated list of notes immediately
+      final posterId = (context.read<AppUserCubit>().state as AppUserLoggedIn)
+          .loggedInUserCred
+          .uid;
+      context.read<NoteBloc>().add(NotesFetchAllNotes(posterId: posterId));
+    } else if (state is Notefailure) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting note: ${state.message}')),
+      );
+    }
+  });
+
+  // ✅ Cancel listener when deletion is done to prevent memory leaks
+  Future.delayed(Duration(seconds: 5), () {
+    subscription.cancel();
+  });
+}
+
 
   void _addNewLesson() {
     // Implement add new lesson functionality
@@ -302,7 +316,7 @@ class _DashState extends State<Dash> {
                        ${note.lessonNote}
 
                        Created By:
-                        ${userName}
+                        $userName
                            ''';
 
                 // Copy everything to clipboard

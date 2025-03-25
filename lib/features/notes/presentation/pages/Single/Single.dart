@@ -49,12 +49,12 @@ class _SinglePageState extends State<SinglePage> {
      // input6 = int.tryParse(noteId.text.trim());
       input7 = int.tryParse(classSize.text.trim());
 
-      if (input6 == null || input7 == null || input1 == null) {
+      if (  input7 == null || input1 == null) {
           setState(() {
           isLoading = false;
         });
         _showAlertDialog('Invalid Input',
-            'Note ID , Class Size  and Grade must be valid integers.');
+            ' Class Size  and Grade must be valid integers.');
         return;
       }
     } catch (e) {
@@ -90,13 +90,13 @@ class _SinglePageState extends State<SinglePage> {
 
       if (response != null) {
         setState(() {
-          cleanedResponse = response.content?.parts
-                  ?.fold("", (prev, curr) => "$prev ${curr.text}")
-                  ?.replaceAll('*', '') ??
-              "No response received.";
-                        isLoading = false;
-
-        });
+        cleanedResponse = response.content?.parts
+            ?.whereType<TextPart>() // ✅ Extract only text parts
+            .map((part) => part.text) // ✅ Get text safely
+            .join(" ") // ✅ Combine text parts into a single response
+            .replaceAll('*', '') ?? "No response received.";
+        isLoading = false;
+      });
       } else {
         setState(() {
           isLoading = false;
@@ -122,7 +122,7 @@ class _SinglePageState extends State<SinglePage> {
           content: Text(message),
           actions: <Widget>[
             TextButton(
-              child: Text('OK'),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -136,9 +136,9 @@ class _SinglePageState extends State<SinglePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF5F5F5),
+      backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
-        title: Text('Lesson Note Generator',
+        title: const Text('Lesson Note Generator',
             style: TextStyle(color: Colors.white, fontSize: 18)),
         centerTitle: true,
         backgroundColor: Colors.blue,
@@ -200,7 +200,7 @@ class _SinglePageState extends State<SinglePage> {
 
   Widget _buildSection(String title, List<Widget> children) {
     return ExpansionTile(
-      title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
       children: children,
     );
   }
@@ -218,7 +218,7 @@ class _SinglePageState extends State<SinglePage> {
           fillColor: Colors.white,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.deepPurple, width: 2),
+            borderSide: const BorderSide(color: Colors.deepPurple, width: 2),
             borderRadius: BorderRadius.circular(10),
           ),
           errorText: _validateInput(controller.text, label),
@@ -252,10 +252,10 @@ class _SinglePageState extends State<SinglePage> {
         Icons.auto_stories,
         color: Colors.white,
       ),
-      label: Text('Generate My Lesson', style: TextStyle(color: Colors.white)),
+      label: const Text('Generate My Lesson', style: TextStyle(color: Colors.white)),
       style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-        textStyle: TextStyle(fontSize: 16),
+        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+        textStyle: const TextStyle(fontSize: 16),
         backgroundColor: Colors.blue,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),

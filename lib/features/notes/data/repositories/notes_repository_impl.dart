@@ -3,7 +3,9 @@ import 'package:teacherapp_cleanarchitect/core/error/exceptions.dart';
 import 'package:teacherapp_cleanarchitect/core/error/failure.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/data/datasources/notes_remote_data_sources.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/data/models/notes_model.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/data/models/notes_pdfModel.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/domain/entities/notesEntity.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/domain/entities/notespdfEntity.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/domain/repository/notes_repository.dart';
 
 class NotesRepositoryImpl implements NotesRepository {
@@ -71,8 +73,42 @@ Future<Either<Failure, void>> deleteNote({required String UniqueId}) async {
   }
 }
 
+  @override
+  Future<Either<Failure, Notespdfmodel>> uploadpdfNotes({required Pdfid, required posterId, required fileName, required lessonplanUpload, required generatedAt}) async{
+     
+    try {
+     Notespdfmodel notepdfsentity = Notespdfmodel(
+      Pdfid: Pdfid,
+      posterId: posterId,
+      fileName: fileName,
+      lessonplanUpload:lessonplanUpload,
+      generatedAt:  DateTime.now(),
+      );
 
+      final notespdfUpload = await remoteDataSource.uploadPdfNotes(notepdfsentity);
+      return Right(notespdfUpload);
+    } on ServerException catch (e) {
+    // Handle and return a failure with the exception message
+    return left(Failure(message: e.message));
+   } catch (e) {
+    // Catch any other unexpected errors
+    return left(Failure(message: "An unexpected error occurred"));
   }
+  }
+  
+  @override
+  Future<Either<Failure, List<notespdfEntity>>> downloadPDFNotes({required String posterId}) async{
+    try {
+      final notespdfList = await remoteDataSource.downloadPDFNotes(posterId);
+      return Right(notespdfList);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  
+  }
+
+
+}
   
  
   

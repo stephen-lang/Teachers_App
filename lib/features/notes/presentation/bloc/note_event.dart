@@ -8,7 +8,12 @@ final String posterId;
   NotesFetchAllNotes({required this.posterId});
 
 }
+final class NotesFetchPDFNotes extends NoteEvent {
+final String posterId;
 
+  NotesFetchPDFNotes({required this.posterId});
+
+}
 final class NotesUploadNotes extends NoteEvent {
  final String posterId;
   final  String noteId;
@@ -30,4 +35,14 @@ final class NoteDeleteNotes extends NoteEvent{
   final String UniqueId;
 
   NoteDeleteNotes({required this.UniqueId});
+}
+
+final class NotesUploadPDFNotes extends NoteEvent {
+   final  String Pdfid;
+  final  String  posterId;
+  final  String fileName;
+  final String lessonplanUpload;
+  final  DateTime generatedAt;
+
+  NotesUploadPDFNotes({required this.Pdfid,  required this.lessonplanUpload, required this.posterId, required this.fileName, required this.generatedAt});
 }

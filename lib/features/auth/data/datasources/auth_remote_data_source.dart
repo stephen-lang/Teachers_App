@@ -83,7 +83,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       // Return success message
 
       if (updatedUser == null) {
-        throw ServerException(message: 'User is null!!-----');
+        throw const ServerException(message: 'User is null!!-----');
       }
       await _saveUserData(updatedUser);
 
@@ -163,6 +163,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw ServerException(message: e.toString());
     }
   }
+  @override
   Future<void> signOut() async {
     // Implement your sign-out logic here
     // For example, if using Firebase:
