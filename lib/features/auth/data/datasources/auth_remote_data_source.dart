@@ -14,19 +14,19 @@ abstract interface class AuthRemoteDataSource {
     required String displayName,
     required String email,
     required String password,
+    required String role,
   });
   Future<UserModel> loginWithEmailPassword({
     required String email,
     required String password,
   });
 
-  void initializeAuthListener();
+ // void initializeAuthListener();
 
-  get currentUserSession;
+   
   Future<UserModel?> getCurrentUserData();
 
   Future<void> signOut();
-  
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -38,30 +38,49 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
 // functions return usermodels (maps)
-  @override
-  Future<UserModel> loginWithEmailPassword(
-      {required String email, required String password}) async {
-    try {
-      final response = await _firebaseAuth.signInWithEmailAndPassword(
-          email: email, password: password);
-      if (response.user == null) {
-        throw const ServerException(message: 'User is null!!-----');
-      }
-      return UserModel.fromEntity(response.user!).copyWith(
-        email: response.user!.email,
-        displayName: response.user!.displayName,
-      );
-    } catch (e) {
-      throw ServerException(message: e.toString());
+@override
+Future<UserModel> loginWithEmailPassword({
+  required String email,
+  required String password,
+}) async {
+  try {
+    final response = await _firebaseAuth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+    if (response.user == null) {
+      throw const ServerException(message: 'User is null!!-----');
     }
+
+    final uid = response.user!.uid;
+    final userDoc = await _firestore.collection('users').doc(uid).get();
+
+    if (!userDoc.exists) {
+      throw const ServerException(message: 'User document not found!');
+    }
+
+    final userMap = userDoc.data() as Map<String, dynamic>;
+    final role = userMap['role'] ?? 'teacher';
+
+    return UserModel.fromEntity(response.user!).copyWith(
+      email: response.user!.email,
+      displayName: response.user!.displayName,
+      role: role, // ✅ Now role is included
+    );
+  } catch (e) {
+    throw ServerException(message: e.toString());
   }
+}
+
 
   @override
   Future<UserModel> signUpWithEmailPassword(
       {required String displayName,
       required String email,
-      required String password}) async {
-    try {
+      required String password,
+      required String role}) async {
+     try {
       final UserCredential userCredential =
           await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
@@ -69,7 +88,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
       QuerySnapshot query = await FirebaseFirestore.instance
           .collection('users')
-          .where("e-mail", isEqualTo: email)
+          .where("email", isEqualTo: email)
           .get();
       if (query.docs.isNotEmpty) {
         throw const ServerException(message: 'The email is already in use.');
@@ -85,7 +104,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (updatedUser == null) {
         throw const ServerException(message: 'User is null!!-----');
       }
-      await _saveUserData(updatedUser);
+      print("Role of account below---------------");
+      print(role);
+      await _saveUserData(updatedUser, role); // ✅ pass the role explicitly
 
       return UserModel.fromEntity(userCredential.user!).copyWith(
         email: userCredential.user!.email,
@@ -106,63 +127,77 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
   }
 
-  Future<void> _saveUserData(User user) async {
-    final userDoc = _firestore.collection('users').doc(user.uid);
+Future<void> _saveUserData(User fireUser, String role) async {
+  final userDoc = _firestore.collection('users').doc(fireUser.uid);
 
-    // Prepare user data to save
-    final userData = {
-      'displayName': user.displayName ?? '',
-      'email': user.email ?? '',
-      'uid': user.uid,
-    };
+ final userData = {
+  'displayName': fireUser.displayName ?? '',
+  'email': fireUser.email ?? '',
+  'uid': fireUser.uid,
+  'role': role, // ✅ Include role directly here
+};
+await userDoc.set(userData, SetOptions(merge: true));
 
-    await userDoc.set(
-        userData, SetOptions(merge: true)); // Merge updates with existing data
-  }
-
+}
+/*
   @override
   void initializeAuthListener() {
-    _firebaseAuth.authStateChanges().listen((User? user) {
-      if (user != null) {
-        // User is signed in, save to Firestore
-        _saveUserData(user);
-      }
-    });
-  }
-
-  @override
-  get currentUserSession => _firebaseAuth.currentUser;
-
-  @override
-  Future<UserModel?> getCurrentUserData() async {
-    try {
-      if (currentUserSession != null) {
-        // Access the Firestore collection 'users' and get the document with the uid
-        DocumentSnapshot userDoc = await _firestore
-            .collection('users')
-            .doc(currentUserSession!.uid)
-            .get();
-
-        if (userDoc.exists) {
-          UserModel user = UserModel.fromEntityCurrentUser(
-                  userDoc.data() as Map<String, dynamic>)
-              .copyWith(email: currentUserSession!.email);
-          print(user.displayName);
-          return user;
-        } else {
-          // If the document doesn't exist, return null
-          print('No user data found for uid');
-          return null;
+  _firebaseAuth.authStateChanges().listen((User? InitializeAuth) async {
+    if (InitializeAuth != null) {
+      try {
+        final doc = await _firestore.collection('users').doc(InitializeAuth.uid).get();
+        if (doc.exists) {
+          final role = doc.data()?['role'] ?? 'teacher';
+          print(role);
+          await _saveUserData(InitializeAuth, role);
         }
+      } catch (e) {
+        print('Failed to fetch role: $e');
+      }
+    }
+  });
+}
+*/
+
+  @override
+Future<UserModel?> getCurrentUserData() async {
+  try {
+    final currentUser = _firebaseAuth.currentUser;
+
+    if (currentUser != null) {
+      // 1️⃣ Get base user info from the 'users' collection
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(currentUser.uid).get();
+
+      final userMap = userDoc.data() as Map<String, dynamic>;
+      final role = userMap['role'] ?? 'teacher';
+
+
+      if (userDoc.exists) {
+        // 4️⃣ Merge the role into the model
+        final userMap = userDoc.data() as Map<String, dynamic>;
+
+        UserModel userfromentity = UserModel.fromEntityCurrentUser(userMap).copyWith(
+          email: currentUser.email,
+          role: role, // Include role from the new collection
+        );
+
+        print("Fetched user with role: ${userfromentity.role}");
+        return userfromentity;
       } else {
-        // No user is logged in
-        print('No user is logged in');
+        print('No user data found for uid');
         return null;
       }
-    } catch (e) {
-      throw ServerException(message: e.toString());
+    } else {
+      print('No user is logged in');
+      return null;
     }
+  } catch (e) {
+    throw ServerException(message: e.toString());
   }
+}
+
+
   @override
   Future<void> signOut() async {
     // Implement your sign-out logic here

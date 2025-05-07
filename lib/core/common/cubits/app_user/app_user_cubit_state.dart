@@ -8,7 +8,7 @@ final class AppUserCubitInitial extends AppUserCubitState {}
 
 final class AppUserLoggedIn  extends AppUserCubitState {
 
-  final User loggedInUserCred;
+  final AppUser loggedInUserCred;
 
   AppUserLoggedIn({required this.loggedInUserCred}); 
 }

@@ -68,47 +68,48 @@ class _UploadPageState extends State<UploadPage> {
     return images;
   }
 
- Future<void> sendImagesToGemini(List<Uint8List> images) async {
-  if (_promptController.text.isEmpty) {
-    _showSnackBar("Please enter a prompt before generating the lesson plan.",
-        Colors.red, Colors.white, Icons.error);
-    return;
-  }
-
-  setState(() {
-    _isLoading = true;
-    _statusMessage = "Processing your document...";
-  });
-
-  try {
-    var response = await gemini.textAndImage(
-      text: _promptController.text,
-      images: images,
-    );
-
-    if (response != null) {
-      var responseText = response.content?.parts
-          ?.whereType<TextPart>() // ✅ Extract only TextPart
-          .map((part) => part.text) // ✅ Get text safely
-          .join(" ") // ✅ Combine text parts
-          .replaceAll('*', '') ?? "No response received.";
-
-      setState(() {
-        _lessonPlan = responseText;
-        _statusMessage = "Lesson Plan Generated! ✅";
-      });
-    } else {
-      _showSnackBar("Failed to generate lesson plan.", Colors.red,
-          Colors.white, Icons.error_outline);
+  Future<void> sendImagesToGemini(List<Uint8List> images) async {
+    if (_promptController.text.isEmpty) {
+      _showSnackBar("Please enter a prompt before generating the lesson plan.",
+          Colors.red, Colors.white, Icons.error);
+      return;
     }
-  } catch (e) {
-    _showSnackBar("Error: $e", Colors.red, Colors.black, Icons.error_outline);
-  }
 
-  setState(() {
-    _isLoading = false;
-  });
-}
+    setState(() {
+      _isLoading = true;
+      _statusMessage = "Processing your document...";
+    });
+
+    try {
+      var response = await gemini.textAndImage(
+        text: _promptController.text,
+        images: images,
+      );
+
+      if (response != null) {
+        var responseText = response.content?.parts
+                ?.whereType<TextPart>() // ✅ Extract only TextPart
+                .map((part) => part.text) // ✅ Get text safely
+                .join(" ") // ✅ Combine text parts
+                .replaceAll('*', '') ??
+            "No response received.";
+
+        setState(() {
+          _lessonPlan = responseText;
+          _statusMessage = "Lesson Plan Generated! ✅";
+        });
+      } else {
+        _showSnackBar("Failed to generate lesson plan.", Colors.red,
+            Colors.white, Icons.error_outline);
+      }
+    } catch (e) {
+      _showSnackBar("Error: $e", Colors.red, Colors.black, Icons.error_outline);
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   void initState() {
@@ -335,27 +336,32 @@ class _UploadPageState extends State<UploadPage> {
               ],
               const SizedBox(height: 40),
               // code should go here
-              /*
-              Expanded(
+
+              SizedBox(
+                height:MediaQuery.of(context).size.height * 0.8, // ✅ Set a height
                 child: BlocBuilder<NoteBloc, NoteState>(
                   builder: (context, state) {
                     if (state is NoteLoading) {
                       return const Center(child: CircularProgressIndicator());
                     }
-                    if (state is NoteError) {
+                    if (state is Notefailure) {
                       return const Center(
                           child: Text("Error fetching lesson notes ❌"));
                     }
-                    if (state is NoteLoaded) {
-                      if (state.notes.isEmpty) {
+                    if (state is PDFNoteDisplaySuccess) {
+                        print("PDF Notes Fetched: ${state.pdfnote}"); // Debugging
+                      if (state.pdfnote.isEmpty) {
                         return const Center(
                             child: Text("No lesson notes available 📂"));
                       }
-                      List<Map<String, dynamic>> notes = state.notes;
+
+                    
+
                       return ListView.builder(
                         shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: notes.length,
+                        physics:
+                            const AlwaysScrollableScrollPhysics(), // ✅ Allows scrolling
+                        itemCount: state.pdfnote.length,
                         itemBuilder: (context, index) {
                           return Card(
                             elevation: 4,
@@ -365,27 +371,11 @@ class _UploadPageState extends State<UploadPage> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: ExpansionTile(
-                              title: Text(
-                                notes[index]['fileName'],
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
+                              title: Text(state.pdfnote[index].fileName), // No need for map
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(10.0),
-                                  child: Text(notes[index]['lessonNote']),
-                                ),
-                                ButtonBar(
-                                  alignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    TextButton.icon(
-                                      onPressed: () => _copyToClipboard(
-                                          notes[index]['lessonNote']),
-                                      icon: const Icon(Icons.copy,
-                                          color: Colors.orange),
-                                      label: const Text("Copy Note"),
-                                    ),
-                                  ],
+                                  child: Text(state.pdfnote[index].lessonplanUpload),
                                 ),
                               ],
                             ),
@@ -393,12 +383,10 @@ class _UploadPageState extends State<UploadPage> {
                         },
                       );
                     }
-                    return const SizedBox(); // Default case to avoid returning null
+                    return const SizedBox();
                   },
                 ),
-              ),
-
-              */
+              )
             ],
           ),
         ),

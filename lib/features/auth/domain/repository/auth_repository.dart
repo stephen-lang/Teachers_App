@@ -12,17 +12,18 @@ abstract interface class AuthRepository {
 //sign in with email and pass
 
 // either returns a failure or success below
-  Future <Either<Failure, User>> signUpWithEmailPassword({
+  Future <Either<Failure, AppUser>> signUpWithEmailPassword({
     required String displayName,
     required String email,
     required String password,
+    required String role,
   });
 
-Future< Either<Failure, User>>loginWithEmailPassword({
+Future< Either<Failure, AppUser>>loginWithEmailPassword({
     required String email,
     required String password,
   });
 
-   Future<Either<Failure,User>> currentUser();
+   Future<Either<Failure,AppUser>> currentUser();
   Future<Either<Failure, void>> signOut();
 } 

@@ -145,10 +145,10 @@ Future<NotesModel> uploadNotes(NotesModel notes) async {
    try {
       // Fetch all notes for the current user
       QuerySnapshot snapshot = await _firestore
-          .collection('notes')
+          .collection('pdflessons')
           .where('posterId', isEqualTo: posterId)
           .get();
-         //print("Query Snapshot: ${snapshot.docs.length} docs found");
+         print("Query Snapshot: ${snapshot.docs.length} docs found");
 
          if (snapshot.docs.isNotEmpty) {
         // Map the result and cast to List<NotesModel>

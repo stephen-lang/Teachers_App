@@ -4,7 +4,7 @@ import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/Sing
 import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/chat/chat.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/home/dashboard.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/upload/upload.dart';
-import '../../controllers/auth_controller.dart';
+ import '../../controllers/auth_controller.dart';
 
 class NavigationController extends GetxController {
   final Rx<int> selectedIndex = 0.obs;
@@ -22,4 +22,6 @@ class NavigationController extends GetxController {
         // Obx(() => ChatPage(userName: authController.userName.value)),
         // Obx(() => UploadPage(userName: authController.userName.value)),
       ];
+      
+
 }

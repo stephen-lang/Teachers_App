@@ -7,13 +7,13 @@ import 'package:teacherapp_cleanarchitect/features/auth/domain/repository/auth_r
 
 import '../../../../core/common/entities/user.dart';
 
-class UserLogin implements UseCase <User,UserLoginParams>{
+class UserLogin implements UseCase <AppUser,UserLoginParams>{
   //we are directly talking to our NetworkInterface
   final AuthRepository authRepository;
     const UserLogin(this.authRepository);
 
   @override
-  Future<Either<Failure, User>> call(UserLoginParams params) async {
+  Future<Either<Failure, AppUser>> call(UserLoginParams params) async {
       return await authRepository.loginWithEmailPassword(
       email: params.email,
       password: params.password,

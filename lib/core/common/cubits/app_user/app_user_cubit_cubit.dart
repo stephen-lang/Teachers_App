@@ -7,7 +7,7 @@ part 'app_user_cubit_state.dart';
 class AppUserCubit extends Cubit<AppUserCubitState> {
   AppUserCubit() : super(AppUserCubitInitial());
 
-  void updateUser(User? user){
+  void updateUser(AppUser? user){
     if(user== null){
       emit(AppUserCubitInitial());
     }else{

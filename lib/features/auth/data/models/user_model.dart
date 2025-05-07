@@ -8,14 +8,15 @@ import 'package:teacherapp_cleanarchitect/core/common/entities/user.dart';
 // we now going to use the from JSON in the user model to retrieve and send data
 //from firebase
 // for reuse purposes
-class UserModel extends User {
-  UserModel(
-      {required super.displayName, required super.email, required super.uid});
+class UserModel extends AppUser {
+  UserModel(  
+      {required super.displayName, required super.email, required super.uid, required super.role , });
   Map<String, Object?> toDocument() {
     return {
       'id': uid,
       'email': email,
-      'displayName ': displayName,
+      'displayName': displayName,
+      'role': role,
     };
   }
 
@@ -23,11 +24,13 @@ class UserModel extends User {
     String? uid,
     String? email,
     String? displayName,
+    String? role,
   }) {
     return UserModel(
       displayName: displayName ?? this.displayName,
       email: email?? this.email,
-      uid: uid?? this.uid,
+      uid:   uid?? this.uid,
+      role: role?? this.role,
     );
   }
 
@@ -37,17 +40,21 @@ class UserModel extends User {
       displayName: doc['displayName '] ?? '',
       email: doc['email'] ?? '',
       uid: doc['uid'] ?? '',
+       role: doc['role'] ??'',
+      
     );
+
   }
 
-  static UserModel fromEntity(entity) {
-    //returns a JSON format
-    return UserModel(
+  static UserModel fromEntity( entity) {
+  return UserModel(
     uid: entity.uid ?? 'No email uid provided------',
-      email: entity.email ?? 'No email provided------', // Provide a default value
-      displayName: entity.displayName ?? 'No display name------', // Provide a default value
-    );
-  }
+    email: entity.email ?? 'No email provided------',
+    displayName: entity.displayName ?? 'No display name------',
+    role: '', // Set it to empty or provide it later using .copyWith()
+  );
+}
+
 
   factory UserModel.fromEntityCurrentUser(Map<String, dynamic>? data) {
     // Make sure the data isn't null before accessing it
@@ -59,7 +66,8 @@ class UserModel extends User {
       displayName: data['displayName'] ??
           'Unknown', // default value if name is not provided
       email: data['email'] ?? 'No email', // default value if email is missing
-      uid: data['uid'] ?? '', // must always have a UID in the Firestore data
+      uid: data['uid'] ?? '', 
+      role: data['role'] ?? '', 
     );
   }
 
@@ -68,6 +76,7 @@ class UserModel extends User {
       uid: uid,
       email: email,
       displayName: displayName,
+      role: role, 
     );
   }
 }

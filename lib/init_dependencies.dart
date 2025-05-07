@@ -47,8 +47,8 @@ void initAuth() {
   );
 
   // Initialize auth listener after the registration
-  final authRemoteDataSource = serviceLocator<AuthRemoteDataSource>();
-  authRemoteDataSource.initializeAuthListener();
+ // final authRemoteDataSource = serviceLocator<AuthRemoteDataSource>();
+ // authRemoteDataSource.initializeAuthListener();
 
   // Register AuthRepository - remove the duplicate registration
   serviceLocator.registerFactory<AuthRepository>(

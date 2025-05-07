@@ -1,13 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
-//import 'package:teacherapp_cleanarchitect/core/common/entities/user.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/components/my_text_field.dart';
-//import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/home/dashboard.dart';
-
-import '../../../notes/presentation/controllers/auth_controller.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/HeadmasterPage/Headmaster_Page.dart';
+import '../../../../core/common/cubits/app_user/app_user_cubit_cubit.dart';
 import '../../../notes/presentation/pages/nav/nav_bar.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -25,7 +22,8 @@ class _SignInScreenState extends State<SignInScreen> {
   IconData iconPassword = CupertinoIcons.eye_fill;
   bool obscurePassword = true;
   String? _errorMsg;
-   @override
+
+  @override
   void dispose() {
     passwordController.dispose();
     emailController.dispose();
@@ -34,63 +32,78 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthBloc, AuthState>(listener: (context, state) {
-      if (state is AuthSuccess) {
-        final String userme = state.userme.displayName;
-        print("Login Successful - Updating username to: $userme");
-  Get.find<AuthController>().updateUserName(userme);
-        setState(() {
-          signInRequired = false;
-          _errorMsg = null;
-          Navigator.of(context).pushAndRemoveUntil(
-  MaterialPageRoute(builder: (context) => const NavigationMenu()),
-  (route) => false, // Removes all previous routes
-);
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthSuccess) {
+           final user = state.userme;
+            context.read<AppUserCubit>().updateUser(user); // ✅ store user globally
 
-        });
-      }
+          final role = state.userme.role?.trim().toLowerCase();
+          print("Login successful - Role: $role");
 
- else if (state is AuthLoading) {
-        setState(() {
-          signInRequired = true;
-          _errorMsg = null; // Clear any previous error messages during loading
-        });
-      } else if (state is AuthFailure) {
-        setState(() {
-          signInRequired = false;
-          _errorMsg = 'Invalid email or password';
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-                state.message), // Show the error message
-            backgroundColor: Colors.red,
-          ),);
-        });
-      }
-    }, builder: (BuildContext context, AuthState state) {
-      return SingleChildScrollView(
-        child: Form(
+          setState(() {
+            signInRequired = false;
+            _errorMsg = null;
+          });
+
+          // Redirect based on role
+          if (role == 'headmaster') {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const HeadmasterDashboard()),
+              (route) => false,
+            );
+          } else {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const NavigationMenu()),
+              (route) => false,
+            );
+          }
+        } else if (state is AuthLoading) {
+          setState(() {
+            signInRequired = true;
+            _errorMsg = null;
+          });
+        } else if (state is AuthFailure) {
+          setState(() {
+            signInRequired = false;
+            _errorMsg = 'Invalid email or password';
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        return SingleChildScrollView(
+          child: Form(
             key: _formKey,
             child: Column(
               children: [
                 const SizedBox(height: 20),
                 SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: MyTextField(
-                        controller: emailController,
-                        hintText: 'Email',
-                        obscureText: false,
-                        keyboardType: TextInputType.emailAddress,
-                        prefixIcon: const Icon(CupertinoIcons.mail_solid),
-                        errorMsg: _errorMsg,
-                        validator: (val) {
-                          if (val!.isEmpty) {
-                            return 'Please fill in this field';
-                          } else if (!RegExp(r'^[\w-\.]+@([\w-]+.)+[\w-]{2,4}$')
-                              .hasMatch(val)) {
-                            return 'Please enter a valid email';
-                          }
-                          return null;
-                        })),
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: MyTextField(
+                    controller: emailController,
+                    hintText: 'Email',
+                    obscureText: false,
+                    keyboardType: TextInputType.emailAddress,
+                    prefixIcon: const Icon(CupertinoIcons.mail_solid),
+                    errorMsg: _errorMsg,
+                    validator: (val) {
+                      if (val!.isEmpty) {
+                        return 'Please fill in this field';
+                      } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                          .hasMatch(val)) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
                 const SizedBox(height: 10),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.9,
@@ -115,11 +128,9 @@ class _SignInScreenState extends State<SignInScreen> {
                       onPressed: () {
                         setState(() {
                           obscurePassword = !obscurePassword;
-                          if (obscurePassword) {
-                            iconPassword = CupertinoIcons.eye_fill;
-                          } else {
-                            iconPassword = CupertinoIcons.eye_slash_fill;
-                          }
+                          iconPassword = obscurePassword
+                              ? CupertinoIcons.eye_fill
+                              : CupertinoIcons.eye_slash_fill;
                         });
                       },
                       icon: Icon(iconPassword),
@@ -131,39 +142,46 @@ class _SignInScreenState extends State<SignInScreen> {
                     ? SizedBox(
                         width: MediaQuery.of(context).size.width * 0.5,
                         child: TextButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                setState(() {
-                                  _errorMsg = null;
-                                });
-                                context.read<AuthBloc>().add(AuthLogin(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              setState(() {
+                                _errorMsg = null;
+                              });
+                              context.read<AuthBloc>().add(AuthLogin(
                                     email: emailController.text,
-                                    password: passwordController.text));
-                              }
-                            },
-                            style: TextButton.styleFrom(
-                                elevation: 3.0,
-                                backgroundColor: Colors.blue,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(60))),
-                            child: const Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 25, vertical: 5),
-                              child: Text(
-                                'Sign In',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600),
+                                    password: passwordController.text,
+                                  ));
+                            }
+                          },
+                          style: TextButton.styleFrom(
+                            elevation: 3.0,
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(60),
+                            ),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 25, vertical: 5),
+                            child: Text(
+                              'Sign In',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
                               ),
-                            )),
+                            ),
+                          ),
+                        ),
                       )
                     : const CircularProgressIndicator(),
               ],
-            )),
-      );
-    });
+            ),
+          ),
+        );
+      },
+    );
   }
 }

@@ -5,14 +5,16 @@ import 'package:get/get.dart';
 import 'package:teacherapp_cleanarchitect/Constants/const.dart';
 import 'package:teacherapp_cleanarchitect/core/common/cubits/app_user/app_user_cubit_cubit.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/bloc/auth_bloc.dart';
-//import 'package:teacherapp_cleanarchitect/features/auth/presentation/pages/SignIn_Page.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/pages/WelcomeScreen.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/note_bloc.dart';
-//import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/home/dashboard.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/HeadmasterPage/Headmaster_Page.dart';
 import 'package:teacherapp_cleanarchitect/init_dependencies.dart';
-
+import 'features/auth/presentation/pages/SplashScreen.dart';
 import 'features/notes/presentation/controllers/auth_controller.dart';
 import 'features/notes/presentation/pages/nav/nav_bar.dart';
+
+// Define the global navigator key
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +30,7 @@ void main() async {
       BlocProvider(
         create: (context) => serviceLocator<AuthBloc>(),
       ),
-       BlocProvider(
+      BlocProvider(
         create: (context) => serviceLocator<NoteBloc>(),
       ),
     ],
@@ -47,64 +49,39 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+WidgetsBinding.instance.addPostFrameCallback((_) {
     context.read<AuthBloc>().add(AuthIsUserLoggedIn());
-  }
+  });
+    }
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+      home: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
 
-      // we register the block here
-      // and add more blocks
-      home: BlocSelector<AppUserCubit, AppUserCubitState, String?>(
-       selector: (state) {
-    if (state is AppUserLoggedIn) {
-      return state.loggedInUserCred.displayName; // Assuming userName is a field in AppUserLoggedIn state
-    }
-    return null;
-  },
-  builder: (context, userName) {
-    if (userName != null) {
- return const NavigationMenu(); 
-     // return Dash(userName: userName);  // Pass the username to Dash
-    }
-    return const WelcomeScreen();
-  },
-      ),
-    );
-  }
-}
 
-/*
-Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+          if (state is AuthSuccess) {
+            final role = state.userme.role?.trim().toLowerCase();
+             print('[main.dart] AuthSuccess - role = $role');
 
-      // we register the block here
-      // and add more blocks
-      home: BlocSelector<AppUserCubit, AppUserCubitState, bool>(
-        selector: (state) {
-          return state is AppUserLoggedIn;
-        },
-        builder: (context, AuthIsUserLoggedIn) {
-          if ( AuthIsUserLoggedIn) {
-            
-            return const Dash()  ;
+            if (role == 'headmaster') {
+              return HeadmasterDashboard();
+            } else {
+              return const NavigationMenu();
+            }
           }
+
           return const WelcomeScreen();
         },
       ),
     );
   }
-  */
+}

@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:teacherapp_cleanarchitect/core/activity/activity_logger.dart';
 import 'package:teacherapp_cleanarchitect/core/common/cubits/app_user/app_user_cubit_cubit.dart';
 import 'package:teacherapp_cleanarchitect/core/common/entities/user.dart';
 import 'package:teacherapp_cleanarchitect/core/usecase/usecase.dart';
@@ -7,6 +9,9 @@ import 'package:teacherapp_cleanarchitect/features/auth/domain/usecases/current_
 import 'package:teacherapp_cleanarchitect/features/auth/domain/usecases/signout_user.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/domain/usecases/user_login.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/domain/usecases/user_sign_up.dart';
+import 'package:teacherapp_cleanarchitect/main.dart';
+
+import '../../../notes/presentation/pages/nav/nav_bar.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -51,6 +56,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: event.email,
         password: event.password,
         displayName: event.displayName,
+        role: event.role,
       ),
     );
     res.fold(
@@ -59,8 +65,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           AuthFailure(message: failure.message),
         ),
       },
-      (user) =>
-          {print(user.uid), print(user.email), _emitAuthSignUpSuccess(user, emit)},
+      (AuthUserSignup) => {
+       
+              //print('[_onAuthSignup] Signup success: ${AuthUserSignup.email}, role: ${AuthUserSignup.role}'),
+
+        _emitAuthSignUpSuccess(AuthUserSignup, emit)
+      },
     );
   }
 
@@ -90,8 +100,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           AuthFailure(message: failure.message),
         ),
       },
-      (user) =>
-          {print(user.uid), print(user.email), _emitAuthSuccess(user, emit)},
+      (human) => {
+        //print(human.uid),
+       // print(human.email),
+         print('[Bloc] Custom user created: role = ${human.role}'),
+        _emitAuthSuccess(human, emit),
+        print(human.role),
+      },
     );
   }
 
@@ -102,28 +117,33 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         password: event.password,
       ),
     );
+
     res.fold(
-        (failure) => {
-              emit(
-                AuthFailure(message: failure.message),
-              ),
-            },
-        (user) =>
-            {print(user.uid), print(user.email), _emitAuthSuccess(user, emit)});
+      (failure) {
+        emit(AuthFailure(message: failure.message));
+      },
+      (AuthLoginuser) {
+        print(AuthLoginuser.uid);
+        print(AuthLoginuser.email);
+        ActivityLogger.log(action: 'login', details: 'User logged in');
+        _emitAuthSuccess(AuthLoginuser, emit);
+      },
+    );
   }
 
-void _emitAuthSignUpSuccess(User user, Emitter<AuthState> emit) {
-  _appUserCubit.updateUser(user);
-  emit(AuthSignUpSuccess(userme: user)); // Emit the new state
+  void _emitAuthSignUpSuccess(AppUser AppUsersuccess, Emitter<AuthState> emit) {
+    _appUserCubit.updateUser(AppUsersuccess);
+    emit(AuthSignUpSuccess(userme: AppUsersuccess)); // Emit the new state
+     // print('[_emitAuthSignUpSuccess] Emitting auth success with role: ${AppUsersuccess.role}');
+
+  }
+
+ void _emitAuthSuccess(
+  AppUser appUserAuthsuccess,
+  Emitter<AuthState> emit,
+) {
+  _appUserCubit.updateUser(appUserAuthsuccess);
+  emit(AuthSuccess(userme: appUserAuthsuccess));
 }
 
-  void _emitAuthSuccess(
-    User user,
-    Emitter<AuthState> emit,
-  ) {
-//uses are been update in the app user cubit here below
-
-    _appUserCubit.updateUser(user);
-    emit(AuthSuccess(userme: user));
-  }
 }

@@ -19,6 +19,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final passwordController = TextEditingController();
   final emailController = TextEditingController();
   final nameController = TextEditingController();
+ String? selectedRole;
+
   final _formKey = GlobalKey<FormState>();
   IconData iconPassword = CupertinoIcons.eye_fill;
   bool obscurePassword = true;
@@ -50,7 +52,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           );
 
-         /* Navigator.of(context).pushReplacement(
+          /* Navigator.of(context).pushReplacement(
     MaterialPageRoute(builder: (context) => const SignInScreen()),
   );*/
           DefaultTabController.of(context).animateTo(0);
@@ -77,6 +79,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             email: emailController.text,
                             password: passwordController.text,
                             displayName: nameController.text,
+                            role: selectedRole ?? '',
                           ),
                         );
 
@@ -270,6 +273,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         return null;
                       }),
                 ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: DropdownButtonFormField<String>(
+                    value: selectedRole,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(CupertinoIcons.person_fill),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                      hintText: 'Select Role',
+                    ),
+                    items: ['Teacher', 'Headmaster'].map((role) {
+                      return DropdownMenuItem(
+                        value: role,
+                        child: Text(role),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedRole = value;
+                        print(
+                            '[UI] Role selected: $selectedRole'); // 👈 DEBUG PRINT
+                      });
+                    },
+                    validator: (val) {
+                      if (val == null || val.isEmpty) {
+                        return 'Please select a role';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                 !signUpRequired
                     ? SizedBox(
@@ -280,9 +316,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 context.read<AuthBloc>().add(
                                       //2:04:54 -video time
                                       AuthSignUp(
-                                          email: emailController.text,
-                                          password: passwordController.text,
-                                          displayName: nameController.text),
+                                        email: emailController.text,
+                                        password: passwordController.text,
+                                        displayName: nameController.text,
+                                        role: selectedRole ?? '',
+                                      ),
                                     );
 
                                 /* setState(() {

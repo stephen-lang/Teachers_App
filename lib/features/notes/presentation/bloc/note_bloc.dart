@@ -128,8 +128,7 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
     );
   }
 
-    void _onGetPDFNotes(
-      NotesFetchPDFNotes event, Emitter<NoteState> emit) async {
+    void _onGetPDFNotes( NotesFetchPDFNotes event, Emitter<NoteState> emit) async {
     emit(NoteLoading());
 
     final result =
@@ -138,13 +137,18 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
     result.fold(
       (failure) => emit(
         Notefailure(message: failure.message),
+ 
       ),
       (pdfnote) {
         if (pdfnote.isEmpty) {
           // Handle the case when there are no notes
+           print("Note is empty");
           emit(PDFNoteDisplaySuccess(
                pdfnote: const [])); // Or emit another state like NoNotesState
+                        
+
         } else {
+          
           print(pdfnote
               .first); // Safely print first note only if the list is not empty
           emit(PDFNoteDisplaySuccess(pdfnote: pdfnote));

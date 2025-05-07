@@ -26,15 +26,15 @@ In your AuthRepositoryImpl class, you're correctly
   AuthRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, User>> loginWithEmailPassword(
+  Future<Either<Failure, AppUser>> loginWithEmailPassword(
       {required String email, required String password}) async {
     try {
-      final user = await remoteDataSource.loginWithEmailPassword(
+      final Loginuser = await remoteDataSource.loginWithEmailPassword(
         email: email,
         password: password,
       );
 
-      return right(user);
+      return right(Loginuser);
     } on ServerException catch (e) {
       return left(Failure(message: e.message));
     }
@@ -53,37 +53,40 @@ In your AuthRepositoryImpl class, you're correctly
       // Handle any other exceptions
       return left(Failure(message: 'An unexpected error occurred'));
     }
-  }
+  } 
 
   @override
-  Future<Either<Failure, User>> signUpWithEmailPassword(
+  Future<Either<Failure, AppUser>> signUpWithEmailPassword(
       {required String displayName,
       required String email,
-      required String password}) async {
+      required String password,
+      required String role,
+     }) async {
     // TODO: implement signUpWithEmailPassword
 
     try {
-      final user = await remoteDataSource.signUpWithEmailPassword(
+      final SignUpuser = await remoteDataSource.signUpWithEmailPassword(
         displayName : displayName,
         email: email,
         password: password,
+        role: role,
       );
       //below is the fpdart package
       // returns the right thing if successful
-      return right(user);
+      return right(SignUpuser);
     } on ServerException catch (e) {
       return left(Failure(message: e.message));
     }
   }
 
   @override
-  Future<Either<Failure, User>> currentUser() async {
+  Future<Either<Failure, AppUser>> currentUser() async {
     try {
-      final user = await remoteDataSource.getCurrentUserData();
-      if (user == null) {
+      final Currnuser = await remoteDataSource.getCurrentUserData();
+      if (Currnuser == null) {
         return left(Failure(message: "user is not logged in"));
       }
-      return right(user);
+      return right(Currnuser);
     } on ServerException catch (e) {
       return left(Failure(message: e.message));
   }

@@ -65,17 +65,30 @@ class _DashState extends State<Dash> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Obx(() {
-              final userName = Get.find<AuthController>().userName.value;
-              return Text(
-                "Hi, $userName!",
-                style: const TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                ),
-              );
-            }),
+            BlocBuilder<AppUserCubit, AppUserCubitState>(
+              builder: (context, state) {
+                if (state is AppUserLoggedIn) {
+                  final userName = state.loggedInUserCred.displayName ?? 'User';
+                  return Text(
+                    "Hi, $userName!",
+                    style: const TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  );
+                } else {
+                  return const Text(
+                    "Hi!",
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  );
+                }
+              },
+            ),
             const SizedBox(height: 20),
             Container(
               decoration: BoxDecoration(
@@ -102,7 +115,6 @@ class _DashState extends State<Dash> {
                       return const Center(child: Text("No lessons found."));
                     }
                     return ListView.builder(
-                      // ✅ Add 'return' here!
                       itemCount: state.notes.length,
                       itemBuilder: (context, index) {
                         final note = state.notes[index];
@@ -225,43 +237,42 @@ class _DashState extends State<Dash> {
     );
   }
 
- void _deleteLesson(note) {
-  final uniqueNoteId = note.noteId; // Assuming the note object has `uniqueId`
+  void _deleteLesson(note) {
+    final uniqueNoteId = note.noteId; // Assuming the note object has `uniqueId`
 
-  // Trigger Note Delete Bloc Event
-  context.read<NoteBloc>().add(NoteDeleteNotes(UniqueId: uniqueNoteId));
+    // Trigger Note Delete Bloc Event
+    context.read<NoteBloc>().add(NoteDeleteNotes(UniqueId: uniqueNoteId));
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text('Deleting Note: ${note.indicators}')),
-  );
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Deleting Note: ${note.indicators}')),
+    );
 
-  // ✅ Listen for changes and refresh UI only if the widget is still mounted
-  final subscription = context.read<NoteBloc>().stream.listen((state) {
-    if (!mounted) return; // ✅ Prevents updates if the widget is gone
+    // ✅ Listen for changes and refresh UI only if the widget is still mounted
+    final subscription = context.read<NoteBloc>().stream.listen((state) {
+      if (!mounted) return; // ✅ Prevents updates if the widget is gone
 
-    if (state is NoteDeletedSucess) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Note deleted successfully')),
-      );
+      if (state is NoteDeletedSucess) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Note deleted successfully')),
+        );
 
-      // ✅ Fetch updated list of notes immediately
-      final posterId = (context.read<AppUserCubit>().state as AppUserLoggedIn)
-          .loggedInUserCred
-          .uid;
-      context.read<NoteBloc>().add(NotesFetchAllNotes(posterId: posterId));
-    } else if (state is Notefailure) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error deleting note: ${state.message}')),
-      );
-    }
-  });
+        // ✅ Fetch updated list of notes immediately
+        final posterId = (context.read<AppUserCubit>().state as AppUserLoggedIn)
+            .loggedInUserCred
+            .uid;
+        context.read<NoteBloc>().add(NotesFetchAllNotes(posterId: posterId));
+      } else if (state is Notefailure) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error deleting note: ${state.message}')),
+        );
+      }
+    });
 
-  // ✅ Cancel listener when deletion is done to prevent memory leaks
-  Future.delayed(Duration(seconds: 5), () {
-    subscription.cancel();
-  });
-}
-
+    // ✅ Cancel listener when deletion is done to prevent memory leaks
+    Future.delayed(Duration(seconds: 5), () {
+      subscription.cancel();
+    });
+  }
 
   void _addNewLesson() {
     // Implement add new lesson functionality

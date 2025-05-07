@@ -8,17 +8,18 @@ import 'package:fpdart/fpdart.dart';
 //they should have a particular stucture
 // it should return params
 // Now we use the Usecase interface here for user sign up
-class UserSignUp implements UseCase<User, UserSignUpParams> {
+class UserSignUp implements UseCase<AppUser, UserSignUpParams> {
   final AuthRepository authRepository;
   const UserSignUp(this.authRepository);
 
   //the function returns either failure or string when success
   @override
-  Future<Either<Failure, User>> call(UserSignUpParams params) async {
+  Future<Either<Failure, AppUser>> call(UserSignUpParams params) async {
    return await authRepository.signUpWithEmailPassword(
       displayName: params.displayName,
       email: params.email,
-      password: params.password,
+      password: params.password, 
+      role: params.role,
     );
   }
 }
@@ -31,7 +32,9 @@ class UserSignUpParams {
   final String email;
   final String password;
   final String displayName ;
+  final String role;
+//  final String role;
 
-  UserSignUpParams(
-      {required this.email, required this.password, required this.displayName});
+  UserSignUpParams( 
+      {required this.email, required this.password, required this.displayName, required this.role, });
 }
