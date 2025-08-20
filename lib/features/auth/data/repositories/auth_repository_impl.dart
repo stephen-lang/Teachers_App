@@ -6,7 +6,7 @@ import 'package:teacherapp_cleanarchitect/core/error/failure.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:teacherapp_cleanarchitect/core/common/entities/user.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/domain/repository/auth_repository.dart';
- 
+
 //now we create a repository in the data layer to implement
 //the domain layer
 class AuthRepositoryImpl implements AuthRepository {
@@ -40,7 +40,6 @@ In your AuthRepositoryImpl class, you're correctly
     }
   }
 
-  
   @override
   Future<Either<Failure, void>> signOut() async {
     try {
@@ -53,23 +52,27 @@ In your AuthRepositoryImpl class, you're correctly
       // Handle any other exceptions
       return left(Failure(message: 'An unexpected error occurred'));
     }
-  } 
+  }
 
   @override
-  Future<Either<Failure, AppUser>> signUpWithEmailPassword(
-      {required String displayName,
-      required String email,
-      required String password,
-      required String role,
-     }) async {
+  Future<Either<Failure, AppUser>> signUpWithEmailPassword({
+    required String displayName,
+    required String email,
+    required String password,
+    required String role,
+    required String schoolId,
+    required String schoolName,
+  }) async {
     // TODO: implement signUpWithEmailPassword
 
     try {
       final SignUpuser = await remoteDataSource.signUpWithEmailPassword(
-        displayName : displayName,
+        displayName: displayName,
         email: email,
         password: password,
         role: role,
+        schoolId: schoolId,
+        schoolName: schoolName,
       );
       //below is the fpdart package
       // returns the right thing if successful
@@ -89,6 +92,33 @@ In your AuthRepositoryImpl class, you're correctly
       return right(Currnuser);
     } on ServerException catch (e) {
       return left(Failure(message: e.message));
+    }
   }
-}
+
+  @override
+  Future<Either<Failure, String>> createSchool({
+    required String schoolName,
+    required String createdBy,
+  }) async {
+    try {
+      final schoolId = await remoteDataSource.createSchool(
+        schoolName: schoolName,
+        createdBy: createdBy,
+      );
+      return right(schoolId);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> validateSchoolCode(
+      {required String schoolId}) async {
+    try {
+      final schoolName = await remoteDataSource.validateSchoolCode(schoolId: schoolId);
+      return right(schoolName);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
 }

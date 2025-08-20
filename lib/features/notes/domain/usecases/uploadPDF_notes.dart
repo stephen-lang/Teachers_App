@@ -10,7 +10,7 @@ class UploadPDFNotes implements UseCase<notespdfEntity,UploadpdfNotesParam> {
 
   @override
   Future<Either<Failure, notespdfEntity>> call(UploadpdfNotesParam params) async {
-    return await notesRepository.uploadpdfNotes(Pdfid: params.Pdfid,  lessonplanUpload:params.lessonplanUpload, posterId: params.posterId, fileName:  params.fileName, generatedAt: params.generatedAt);
+    return await notesRepository.uploadpdfNotes(Pdfid: params.Pdfid,  lessonplanUpload:params.lessonplanUpload, posterId: params.posterId, fileName:  params.fileName, schoolId:params.schoolId, generatedAt: params.generatedAt);
   }
  
 }
@@ -21,6 +21,7 @@ class UploadpdfNotesParam {
   final  String fileName;
   final String lessonplanUpload;
   final   DateTime generatedAt;
-  UploadpdfNotesParam({required this.Pdfid, required this.posterId, required this.lessonplanUpload, required this.fileName, required this.generatedAt});
+  final String schoolId;
+  UploadpdfNotesParam({required this.Pdfid, required this.posterId, required this.schoolId, required this.lessonplanUpload, required this.fileName, required this.generatedAt});
 
 }

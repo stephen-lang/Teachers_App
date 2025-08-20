@@ -11,6 +11,7 @@ class Notesentity {
   String posterId;
   DateTime updatedAt;
   String? lessonNote;
+  String schoolId;
 
   Notesentity({
     required this.noteId,
@@ -23,6 +24,7 @@ class Notesentity {
     required this.Subject,
     required this.posterId,
     required this.updatedAt,
+    required this.schoolId,
     this.lessonNote,
   });
 }

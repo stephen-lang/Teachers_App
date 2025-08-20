@@ -47,9 +47,10 @@ class _SignInScreenState extends State<SignInScreen> {
           });
 
           // Redirect based on role
-          if (role == 'headmaster') {
+          if (role == 'headmaster') {   
+      
             Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const HeadmasterDashboard()),
+              MaterialPageRoute(builder: (_) =>   HeadmasterDashboard(user:user)),
               (route) => false,
             );
           } else {

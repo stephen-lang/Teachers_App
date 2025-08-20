@@ -22,6 +22,7 @@ abstract interface class NotesRepository {
     required posterId,
     required updatedAt,
     lessonNote,
+    required schoolId,
   });
 
    Future<Either<Failure,void>> deleteNote({required String UniqueId});
@@ -30,7 +31,8 @@ abstract interface class NotesRepository {
     required posterId,
     required fileName,
     required lessonplanUpload,
-    required  generatedAt,
+    required generatedAt,
+    required schoolId,
     });
 Future<Either<Failure, List< notespdfEntity>>> downloadPDFNotes(
       {required String posterId});

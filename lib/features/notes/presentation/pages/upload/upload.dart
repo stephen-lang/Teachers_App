@@ -9,7 +9,7 @@ import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../../core/common/cubits/app_user/app_user_cubit_cubit.dart';
-import '../../bloc/note_bloc.dart';
+import '../../bloc/note/note_bloc.dart';
 
 class UploadPage extends StatefulWidget {
   const UploadPage({super.key});
@@ -117,6 +117,7 @@ class _UploadPageState extends State<UploadPage> {
     final posterId = (context.read<AppUserCubit>().state as AppUserLoggedIn)
         .loggedInUserCred
         .uid;
+        
     context.read<NoteBloc>().add(NotesFetchPDFNotes(posterId: posterId));
   }
 
@@ -153,6 +154,11 @@ class _UploadPageState extends State<UploadPage> {
                     (context.read<AppUserCubit>().state as AppUserLoggedIn)
                         .loggedInUserCred
                         .uid;
+                        final schoolId = (context.read<AppUserCubit>().state
+                                  as AppUserLoggedIn)
+                              .loggedInUserCred
+                              .schoolId;
+
                 String Pdfid = '';
                 String lessonplanUpload = _lessonPlan;
                 if (fileName.isNotEmpty) {
@@ -162,6 +168,7 @@ class _UploadPageState extends State<UploadPage> {
                     fileName,
                     lessonplanUpload,
                     generatedAt,
+                   schoolId!,
                   );
                   Navigator.pop(context); // Close dialog
                 }
@@ -180,13 +187,16 @@ class _UploadPageState extends State<UploadPage> {
     String fileName,
     String lessonplanUpload,
     DateTime generatedAt,
+    String schoolId,
   ) async {
     context.read<NoteBloc>().add(NotesUploadPDFNotes(
         Pdfid: Pdfid,
         posterId: posterId,
         fileName: fileName,
         lessonplanUpload: lessonplanUpload,
-        generatedAt: generatedAt));
+        generatedAt: generatedAt,
+        schoolId:schoolId,
+        ));
   }
 
   void _showSnackBar(

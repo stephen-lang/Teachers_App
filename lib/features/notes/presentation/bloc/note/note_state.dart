@@ -25,7 +25,7 @@ final List<notespdfEntity> pdfnote;
   PDFNoteDisplaySuccess({required this.pdfnote});
 
 }
-
+  
 
 
 final class NoteDisplaySuccess extends NoteState {

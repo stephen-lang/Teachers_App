@@ -17,6 +17,8 @@ abstract interface class AuthRepository {
     required String email,
     required String password,
     required String role,
+    required String schoolId,
+    required String schoolName,
   });
 
 Future< Either<Failure, AppUser>>loginWithEmailPassword({
@@ -26,4 +28,12 @@ Future< Either<Failure, AppUser>>loginWithEmailPassword({
 
    Future<Either<Failure,AppUser>> currentUser();
   Future<Either<Failure, void>> signOut();
+
+  Future<Either<Failure, String>> createSchool({
+    required  String schoolName,
+    required  String createdBy});
+
+  Future<Either<Failure, String>> validateSchoolCode({ required String schoolId});
+
+
 } 

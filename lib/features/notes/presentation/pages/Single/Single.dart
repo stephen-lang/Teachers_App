@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:flutter/services.dart';
-import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/note_bloc.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/note/note_bloc.dart';
 
 import '../../../../../core/common/cubits/app_user/app_user_cubit_cubit.dart';
 
@@ -24,7 +24,7 @@ class _SinglePageState extends State<SinglePage> {
   final TextEditingController contentstandard = TextEditingController();
   final TextEditingController substrand = TextEditingController();
   final TextEditingController strand = TextEditingController();
- // final TextEditingController noteId = TextEditingController();
+  // final TextEditingController noteId = TextEditingController();
   final TextEditingController classSize = TextEditingController();
   final TextEditingController Subject = TextEditingController();
   // final TextEditingController updatedAt = TextEditingController();
@@ -38,23 +38,22 @@ class _SinglePageState extends State<SinglePage> {
     String input3 = contentstandard.text.trim();
     String input4 = substrand.text.trim();
     String input5 = strand.text.trim();
-    int? input6;
-    int? input7;
+     int? input7;
     String input8 = Subject.text.trim();
 
     // String input9 = updatedAt: DateTime.now();
     // lessonNote: ;
     try {
       input1 = int.tryParse(grade.text.trim());
-     // input6 = int.tryParse(noteId.text.trim());
+      // input6 = int.tryParse(noteId.text.trim());
       input7 = int.tryParse(classSize.text.trim());
 
-      if (  input7 == null || input1 == null) {
-          setState(() {
+      if (input7 == null || input1 == null) {
+        setState(() {
           isLoading = false;
         });
-        _showAlertDialog('Invalid Input',
-            ' Class Size  and Grade must be valid integers.');
+        _showAlertDialog(
+            'Invalid Input', ' Class Size  and Grade must be valid integers.');
         return;
       }
     } catch (e) {
@@ -64,9 +63,9 @@ class _SinglePageState extends State<SinglePage> {
 
     if ([input2, input3, input4, input5, input8]
         .any((element) => element.isEmpty)) {
-            setState(() {
-          isLoading = false;
-        });
+      setState(() {
+        isLoading = false;
+      });
       _showAlertDialog(
           'Empty Fields', 'Please fill out all fields before submitting.');
       return;
@@ -90,13 +89,14 @@ class _SinglePageState extends State<SinglePage> {
 
       if (response != null) {
         setState(() {
-        cleanedResponse = response.content?.parts
-            ?.whereType<TextPart>() // ✅ Extract only text parts
-            .map((part) => part.text) // ✅ Get text safely
-            .join(" ") // ✅ Combine text parts into a single response
-            .replaceAll('*', '') ?? "No response received.";
-        isLoading = false;
-      });
+          cleanedResponse = response.content?.parts
+                  ?.whereType<TextPart>() // ✅ Extract only text parts
+                  .map((part) => part.text) // ✅ Get text safely
+                  .join(" ") // ✅ Combine text parts into a single response
+                  .replaceAll('*', '') ??
+              "No response received.";
+          isLoading = false;
+        });
       } else {
         setState(() {
           isLoading = false;
@@ -105,8 +105,8 @@ class _SinglePageState extends State<SinglePage> {
       }
     } catch (e) {
       setState(() {
-          isLoading = false;
-        });
+        isLoading = false;
+      });
       _showAlertDialog('Error',
           'Something went wrong. Please check your internet connection and try again.');
       print(e);
@@ -234,11 +234,10 @@ class _SinglePageState extends State<SinglePage> {
     if (value.trim().isEmpty) {
       return '$fieldName cannot be empty';
     }
-    if ((fieldName == 'Grade' ||
-            fieldName == 'ClassSize'
-            
-          //  || fieldName == 'noteId'
-          ) &&
+    if ((fieldName == 'Grade' || fieldName == 'ClassSize'
+
+        //  || fieldName == 'noteId'
+        ) &&
         int.tryParse(value.trim()) == null) {
       return '$fieldName must be a valid number';
     }
@@ -247,12 +246,13 @@ class _SinglePageState extends State<SinglePage> {
 
   Widget _buildGenerateButton() {
     return ElevatedButton.icon(
-      onPressed: isLoading ? null :_sendRequest,  // Disable button if loading
+      onPressed: isLoading ? null : _sendRequest, // Disable button if loading
       icon: const Icon(
         Icons.auto_stories,
         color: Colors.white,
       ),
-      label: const Text('Generate My Lesson', style: TextStyle(color: Colors.white)),
+      label: const Text('Generate My Lesson',
+          style: TextStyle(color: Colors.white)),
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
         textStyle: const TextStyle(fontSize: 16),
@@ -305,12 +305,16 @@ class _SinglePageState extends State<SinglePage> {
                                   as AppUserLoggedIn)
                               .loggedInUserCred
                               .uid;
-
+                          final schoolId = (context.read<AppUserCubit>().state
+                                  as AppUserLoggedIn)
+                              .loggedInUserCred
+                              .schoolId;
+                          
                           // Prepare data to pass into the event
                           final gradevalue =
                               int.tryParse(grade.text.trim()) ?? 0;
-                         // final noteIdValue =
-                             // int.tryParse(noteId.text.trim()) ?? 0;
+                          // final noteIdValue =
+                          // int.tryParse(noteId.text.trim()) ?? 0;
                           final classSizeValue =
                               int.tryParse(classSize.text.trim()) ?? 0;
                           final lessonNote = cleanedResponse;
@@ -327,7 +331,7 @@ class _SinglePageState extends State<SinglePage> {
                           context.read<NoteBloc>().add(
                                 NotesUploadNotes(
                                   posterId: posterId,
-                                  noteId:  '',
+                                  noteId: '',
                                   grade: gradevalue,
                                   indicators: indicators.text.trim(),
                                   contentStandard: contentstandard.text.trim(),
@@ -337,6 +341,7 @@ class _SinglePageState extends State<SinglePage> {
                                   Subject: Subject.text.trim(),
                                   updatedAt: updatedAthere,
                                   lessonNote: lessonNote,
+                                  schoolId:schoolId!,
                                 ),
                               );
 
@@ -355,7 +360,7 @@ class _SinglePageState extends State<SinglePage> {
                             contentstandard.clear();
                             substrand.clear();
                             strand.clear();
-                           // noteId.clear();
+                            // noteId.clear();
                             classSize.clear();
                             Subject.clear();
                           });

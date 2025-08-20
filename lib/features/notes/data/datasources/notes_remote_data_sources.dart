@@ -62,7 +62,9 @@ Future<NotesModel> uploadNotes(NotesModel notes) async {
     DocumentReference documentRef = _firestore.collection('notes').doc();
 
     // Attach Firestore-generated ID as noteId
-    NotesModel updatedNotes = notes.copyWith(noteId: documentRef.id);
+    NotesModel updatedNotes = notes.copyWith(noteId: documentRef.id,
+     schoolId: notes.schoolId, 
+     );
 
     // Save the note to Firestore with the new noteId
     await documentRef.set(updatedNotes.toDocument());
@@ -90,6 +92,7 @@ Future<NotesModel> uploadNotes(NotesModel notes) async {
         posterId: '',
         updatedAt: DateTime.now(),
         lessonNote: '',
+        schoolId:'',
       );
     }
   } catch (e) {
@@ -112,7 +115,8 @@ Future<NotesModel> uploadNotes(NotesModel notes) async {
     try {
         DocumentReference documentRef = _firestore.collection('pdflessons').doc();
         // Attach Firestore-generated ID as noteId
-       Notespdfmodel updatedPdfNotes = notesPdf.copyWith(Pdfid: documentRef.id);
+       Notespdfmodel updatedPdfNotes = notesPdf.copyWith(Pdfid: documentRef.id,
+        schoolId: notesPdf.schoolId,);
  // Save the note to Firestore with the new noteId
     await documentRef.set(updatedPdfNotes.toDocument());
          // Retrieve the saved document
@@ -132,6 +136,7 @@ Future<NotesModel> uploadNotes(NotesModel notes) async {
         fileName: '',
         lessonplanUpload:'',
         generatedAt:DateTime.now(),
+        schoolId:'',
         
       );
     }

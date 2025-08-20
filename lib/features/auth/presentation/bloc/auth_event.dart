@@ -9,8 +9,11 @@ final class AuthSignUp extends AuthEvent {
   final String password;
   final String displayName ;
   final String role;
+  final String? schoolId;
+  final String? schoolName; // nullable so teachers can skip
 
-  AuthSignUp({required this.email, required this.password, required this.displayName, required this.role, });
+
+  AuthSignUp({required this.email,  this.schoolName, required this.password,  required this.schoolId, required this.displayName, required this.role, });
 }
 final class AuthLogin extends AuthEvent {
   final String email;

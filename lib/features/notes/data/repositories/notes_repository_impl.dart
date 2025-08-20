@@ -35,6 +35,7 @@ class NotesRepositoryImpl implements NotesRepository {
     required Subject,
     required posterId,
     required updatedAt,
+    required schoolId,
      lessonNote, })async{
     try {
      NotesModel notesentity = NotesModel(
@@ -49,6 +50,7 @@ class NotesRepositoryImpl implements NotesRepository {
       posterId: posterId,
       updatedAt: DateTime.now(),
       lessonNote: lessonNote,
+      schoolId:schoolId,
       );
        final notesUpload = await remoteDataSource.uploadNotes(notesentity);
       return Right(notesUpload);
@@ -74,7 +76,7 @@ Future<Either<Failure, void>> deleteNote({required String UniqueId}) async {
 }
 
   @override
-  Future<Either<Failure, Notespdfmodel>> uploadpdfNotes({required Pdfid, required posterId, required fileName, required lessonplanUpload, required generatedAt}) async{
+  Future<Either<Failure, Notespdfmodel>> uploadpdfNotes({required Pdfid, required schoolId, required posterId, required fileName, required lessonplanUpload, required generatedAt}) async{
      
     try {
      Notespdfmodel notepdfsentity = Notespdfmodel(
@@ -82,6 +84,7 @@ Future<Either<Failure, void>> deleteNote({required String UniqueId}) async {
       posterId: posterId,
       fileName: fileName,
       lessonplanUpload:lessonplanUpload,
+      schoolId:schoolId,
       generatedAt:  DateTime.now(),
       );
 

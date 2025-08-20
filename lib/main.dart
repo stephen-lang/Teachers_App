@@ -6,10 +6,9 @@ import 'package:teacherapp_cleanarchitect/Constants/const.dart';
 import 'package:teacherapp_cleanarchitect/core/common/cubits/app_user/app_user_cubit_cubit.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/pages/WelcomeScreen.dart';
-import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/note_bloc.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/note/note_bloc.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/HeadmasterPage/Headmaster_Page.dart';
 import 'package:teacherapp_cleanarchitect/init_dependencies.dart';
-import 'features/auth/presentation/pages/SplashScreen.dart';
 import 'features/notes/presentation/controllers/auth_controller.dart';
 import 'features/notes/presentation/pages/nav/nav_bar.dart';
 
@@ -66,14 +65,12 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
       ),
       home: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
-
-
           if (state is AuthSuccess) {
-            final role = state.userme.role?.trim().toLowerCase();
+            final role = state.userme.role?.trim().toLowerCase(); 
              print('[main.dart] AuthSuccess - role = $role');
 
             if (role == 'headmaster') {
-              return HeadmasterDashboard();
+           return HeadmasterDashboard(user:state.userme); // 👈 pass user here
             } else {
               return const NavigationMenu();
             }
@@ -84,4 +81,5 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
       ),
     );
   }
+  
 }

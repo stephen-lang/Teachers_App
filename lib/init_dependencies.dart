@@ -6,21 +6,27 @@ import 'package:teacherapp_cleanarchitect/core/common/cubits/app_user/app_user_c
 import 'package:teacherapp_cleanarchitect/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/domain/repository/auth_repository.dart';
+import 'package:teacherapp_cleanarchitect/features/auth/domain/usecases/create_school_usecase.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/domain/usecases/current_user.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/domain/usecases/signout_user.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/domain/usecases/user_login.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/domain/usecases/user_sign_up.dart';
+import 'package:teacherapp_cleanarchitect/features/auth/domain/usecases/validate_school_code.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/data/datasources/notes_remote_data_sources.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/data/datasources/school_remote_data_source.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/data/repositories/notes_repository_impl.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/domain/repository/notes_repository.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/domain/usecases/download_PDF_notes.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/domain/usecases/get_all_notes.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/domain/usecases/uploadPDF_notes.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/domain/usecases/upload_notes.dart';
-import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/note_bloc.dart';
-
+import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/note/note_bloc.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/school/school_bloc.dart';
+import 'features/notes/data/repositories/school_repository_impl.dart';
+import 'features/notes/domain/repository/school_repository.dart';
 import 'features/notes/domain/usecases/delete_notes.dart';
+import 'features/notes/domain/usecases/get_school_by_id.dart';
 
 final serviceLocator = GetIt.instance;
 Future<void> initDependecies() async {
@@ -32,7 +38,7 @@ Future<void> initDependecies() async {
       () => FirebaseFirestore.instance);
   initAuth();
   initNote();
-
+  initSchool();
   // core folder registering
   serviceLocator.registerLazySingleton(() => AppUserCubit());
 }
@@ -81,7 +87,18 @@ void initAuth() {
       serviceLocator(),
     ),
   );
-
+   // validate school  
+  serviceLocator.registerCachedFactory(
+    () =>  ValidateSchoolCodeUseCase(
+      serviceLocator(),
+    ),
+  );
+  // createschool uSER
+  serviceLocator.registerCachedFactory(
+    () =>  CreateSchoolUseCase(
+      serviceLocator(),
+    ),
+  );
   // Register AuthBloc
   serviceLocator.registerFactory(
     () => AuthBloc(
@@ -89,7 +106,9 @@ void initAuth() {
       userLogin: serviceLocator(),
       currentUser: serviceLocator(),
       appUserCubit: serviceLocator(),
-      signout_user: serviceLocator(),
+      signout_user: serviceLocator(), 
+      createSchool: serviceLocator(),
+      validateSchoolCode: serviceLocator(),
     ),
   );
 }
@@ -148,6 +167,34 @@ void initNote() {
         uploadNotes: serviceLocator(), 
         uploadPDFnotes: serviceLocator(), 
         GetPDFNotes: serviceLocator(),
+         
+      ),
+    );
+     
+}
+void initSchool() {
+  serviceLocator
+    ..registerFactory<SchoolRemoteDataSource>(
+      () => SchoolRemoteDataSourceImpl(
+        serviceLocator<FirebaseFirestore>(),
+      ),
+    )  
+
+ //repository
+     
+    ..registerFactory<SchoolRepository>(
+      () => SchoolRepositoryImpl(
+        schoolRemoteDataSource: serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => GetSchoolById(
+        serviceLocator(),
+      ),
+    )
+    ..registerLazySingleton(
+      () => SchoolBloc(
+        getSchoolById: serviceLocator(),
       ),
     );
 }

@@ -4,29 +4,38 @@
 //which is the best thing in  clean architecture we dnt want any
 //packages added or dependency
 
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:teacherapp_cleanarchitect/core/error/exceptions.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/data/models/user_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Add Firestore dependency
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+ 
 abstract interface class AuthRemoteDataSource {
   Future<UserModel> signUpWithEmailPassword({
     required String displayName,
     required String email,
     required String password,
     required String role,
+    required String schoolId,
+    required String schoolName,
   });
   Future<UserModel> loginWithEmailPassword({
     required String email,
     required String password,
   });
 
- // void initializeAuthListener();
+  // void initializeAuthListener();
 
-   
   Future<UserModel?> getCurrentUserData();
 
   Future<void> signOut();
+
+  Future<String> createSchool({
+    required String schoolName,
+    required String createdBy,
+  });
+   Future<String> validateSchoolCode({required String schoolId});
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -38,49 +47,53 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
 // functions return usermodels (maps)
-@override
-Future<UserModel> loginWithEmailPassword({
-  required String email,
-  required String password,
-}) async {
-  try {
-    final response = await _firebaseAuth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+  @override
+  Future<UserModel> loginWithEmailPassword({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final response = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    if (response.user == null) {
-      throw const ServerException(message: 'User is null!!-----');
+      if (response.user == null) {
+        throw const ServerException(message: 'User is null!!-----');
+      }
+
+      final uid = response.user!.uid;
+      final userDoc = await _firestore.collection('users').doc(uid).get();
+
+      if (!userDoc.exists) {
+        throw const ServerException(message: 'User document not found!');
+      }
+
+      final userMap = userDoc.data() as Map<String, dynamic>;
+      final role = userMap['role'] ?? 'teacher';
+      final schoolId = userMap['schoolId'] ?? 'teacher';
+       
+      return UserModel.fromEntity(response.user!).copyWith(
+        email: response.user!.email,
+        displayName: response.user!.displayName,
+        role: role,
+        schoolId: schoolId // ✅ Now role is included
+      );
+    } catch (e) {
+      throw ServerException(message: e.toString());
     }
-
-    final uid = response.user!.uid;
-    final userDoc = await _firestore.collection('users').doc(uid).get();
-
-    if (!userDoc.exists) {
-      throw const ServerException(message: 'User document not found!');
-    }
-
-    final userMap = userDoc.data() as Map<String, dynamic>;
-    final role = userMap['role'] ?? 'teacher';
-
-    return UserModel.fromEntity(response.user!).copyWith(
-      email: response.user!.email,
-      displayName: response.user!.displayName,
-      role: role, // ✅ Now role is included
-    );
-  } catch (e) {
-    throw ServerException(message: e.toString());
   }
-}
-
 
   @override
-  Future<UserModel> signUpWithEmailPassword(
-      {required String displayName,
-      required String email,
-      required String password,
-      required String role}) async {
-     try {
+  Future<UserModel> signUpWithEmailPassword({
+    required String displayName,
+    required String email,
+    required String password,
+    required String role,
+    required String schoolId,
+    required String schoolName,
+  }) async {
+    try {
       final UserCredential userCredential =
           await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
@@ -106,7 +119,7 @@ Future<UserModel> loginWithEmailPassword({
       }
       print("Role of account below---------------");
       print(role);
-      await _saveUserData(updatedUser, role); // ✅ pass the role explicitly
+      await _saveUserData(updatedUser, role,schoolId); // ✅ pass the role explicitly
 
       return UserModel.fromEntity(userCredential.user!).copyWith(
         email: userCredential.user!.email,
@@ -127,18 +140,18 @@ Future<UserModel> loginWithEmailPassword({
     }
   }
 
-Future<void> _saveUserData(User fireUser, String role) async {
-  final userDoc = _firestore.collection('users').doc(fireUser.uid);
+  Future<void> _saveUserData(User fireUser, String role,String schoolId) async {
+    final userDoc = _firestore.collection('users').doc(fireUser.uid);
 
- final userData = {
-  'displayName': fireUser.displayName ?? '',
-  'email': fireUser.email ?? '',
-  'uid': fireUser.uid,
-  'role': role, // ✅ Include role directly here
-};
-await userDoc.set(userData, SetOptions(merge: true));
-
-}
+    final userData = {
+      'displayName': fireUser.displayName ?? '',
+      'email': fireUser.email ?? '',
+      'uid': fireUser.uid,
+      'role': role, // ✅ Include role directly here
+      'schoolId':schoolId,
+    };
+    await userDoc.set(userData, SetOptions(merge: true));
+  }
 /*
   @override
   void initializeAuthListener() {
@@ -160,43 +173,42 @@ await userDoc.set(userData, SetOptions(merge: true));
 */
 
   @override
-Future<UserModel?> getCurrentUserData() async {
-  try {
-    final currentUser = _firebaseAuth.currentUser;
+  Future<UserModel?> getCurrentUserData() async {
+    try {
+      final currentUser = _firebaseAuth.currentUser;
 
-    if (currentUser != null) {
-      // 1️⃣ Get base user info from the 'users' collection
-      DocumentSnapshot userDoc =
-          await _firestore.collection('users').doc(currentUser.uid).get();
+      if (currentUser != null) {
+        // 1️⃣ Get base user info from the 'users' collection
+        DocumentSnapshot userDoc =
+            await _firestore.collection('users').doc(currentUser.uid).get();
 
-      final userMap = userDoc.data() as Map<String, dynamic>;
-      final role = userMap['role'] ?? 'teacher';
-
-
-      if (userDoc.exists) {
-        // 4️⃣ Merge the role into the model
         final userMap = userDoc.data() as Map<String, dynamic>;
+        final role = userMap['role'] ?? 'teacher';
 
-        UserModel userfromentity = UserModel.fromEntityCurrentUser(userMap).copyWith(
-          email: currentUser.email,
-          role: role, // Include role from the new collection
-        );
+        if (userDoc.exists) {
+          // 4️⃣ Merge the role into the model
+          final userMap = userDoc.data() as Map<String, dynamic>;
 
-        print("Fetched user with role: ${userfromentity.role}");
-        return userfromentity;
+          UserModel userfromentity =
+              UserModel.fromEntityCurrentUser(userMap).copyWith(
+            email: currentUser.email,
+            role: role, // Include role from the new collection
+          );
+
+          print("Fetched user with role: ${userfromentity.role}");
+          return userfromentity;
+        } else {
+          print('No user data found for uid');
+          return null;
+        }
       } else {
-        print('No user data found for uid');
+        print('No user is logged in');
         return null;
       }
-    } else {
-      print('No user is logged in');
-      return null;
+    } catch (e) {
+      throw ServerException(message: e.toString());
     }
-  } catch (e) {
-    throw ServerException(message: e.toString());
   }
-}
-
 
   @override
   Future<void> signOut() async {
@@ -204,4 +216,51 @@ Future<UserModel?> getCurrentUserData() async {
     // For example, if using Firebase:
     await _firebaseAuth.signOut();
   }
+
+  @override
+  Future<String> createSchool({
+    required String schoolName,
+    required String createdBy,
+  }) async {
+    try {
+      String generateRandomSchoolCode(int length) {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        final rand = Random();
+        return List.generate(
+            length, (index) => chars[rand.nextInt(chars.length)]).join();
+      }
+
+      final schoolId = generateRandomSchoolCode(6);
+
+      await _firestore.collection('schools').doc(schoolId).set({
+        'schoolName': schoolName,
+        'createdBy': createdBy,
+        'schoolId': schoolId,
+        'createdAt': DateTime.now(),
+      });
+
+      return schoolId;
+    } catch (e) {
+      throw ServerException(message: 'Failed to create school: $e');
+    }
+  }
+@override
+Future<String> validateSchoolCode({required String schoolId}) async {
+  try {
+    final doc = await _firestore.collection('schools').doc(schoolId).get();
+
+    if (!doc.exists) {
+      throw ServerException(message: 'Invalid school code. Please check again.');
+    }
+
+    return doc.data()?['schoolName'] ?? '';
+  } on ServerException {
+    // Re-throw our own custom errors without changing the message
+    rethrow;
+  } catch (e) {
+    // Only handle unexpected errors here
+    throw ServerException(message: 'Failed to validate school code: ${e.toString()}');
+  }
+}
+
 }

@@ -4,6 +4,7 @@ class  notespdfEntity {
   final String fileName;
   final String lessonplanUpload;
   final DateTime generatedAt;
+  final String  schoolId;
  
 notespdfEntity({
     required this.Pdfid,
@@ -11,5 +12,6 @@ notespdfEntity({
     required this.fileName,
     required this.lessonplanUpload,
     required this.generatedAt,
+    required this.schoolId,
   });
 }

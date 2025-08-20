@@ -10,13 +10,15 @@ import 'package:teacherapp_cleanarchitect/core/common/entities/user.dart';
 // for reuse purposes
 class UserModel extends AppUser {
   UserModel(  
-      {required super.displayName, required super.email, required super.uid, required super.role , });
+      {required super.displayName, required super.email, required super.uid, required super.role , required super.schoolId ,super.schoolName});
   Map<String, Object?> toDocument() {
     return {
       'id': uid,
       'email': email,
       'displayName': displayName,
       'role': role,
+      'schoolId':schoolId,
+      'schoolName':schoolName,
     };
   }
 
@@ -25,12 +27,17 @@ class UserModel extends AppUser {
     String? email,
     String? displayName,
     String? role,
+    String? schoolId,
+    String? schoolName,
+
   }) {
     return UserModel(
       displayName: displayName ?? this.displayName,
       email: email?? this.email,
       uid:   uid?? this.uid,
       role: role?? this.role,
+      schoolId :schoolId??this.schoolId,
+      schoolName: schoolName??this.schoolName,
     );
   }
 
@@ -40,8 +47,9 @@ class UserModel extends AppUser {
       displayName: doc['displayName '] ?? '',
       email: doc['email'] ?? '',
       uid: doc['uid'] ?? '',
-       role: doc['role'] ??'',
-      
+      role: doc['role'] ??'',
+      schoolId: doc['schoolId']??'',
+      schoolName: doc['schoolName']??'',
     );
 
   }
@@ -52,6 +60,8 @@ class UserModel extends AppUser {
     email: entity.email ?? 'No email provided------',
     displayName: entity.displayName ?? 'No display name------',
     role: '', // Set it to empty or provide it later using .copyWith()
+    schoolId: '',
+    schoolName: '',
   );
 }
 
@@ -63,11 +73,12 @@ class UserModel extends AppUser {
     }
 
     return UserModel(
-      displayName: data['displayName'] ??
-          'Unknown', // default value if name is not provided
+      displayName: data['displayName'] ??   'Unknown', // default value if name is not provided
       email: data['email'] ?? 'No email', // default value if email is missing
       uid: data['uid'] ?? '', 
-      role: data['role'] ?? '', 
+      role: data['role'] ?? '',
+      schoolId:data['schoolId']??'', 
+      schoolName: data['schoolName']??'',
     );
   }
 
@@ -77,6 +88,8 @@ class UserModel extends AppUser {
       email: email,
       displayName: displayName,
       role: role, 
+      schoolId:schoolId,
+      schoolName: schoolName,
     );
   }
 }

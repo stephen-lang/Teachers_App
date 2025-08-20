@@ -17,7 +17,7 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
   final UploadNotes _uploadNotes;
   final DeleteNoteById _deleteNoteById;
   final GetPDFNotes _getPDFNotes;
-
+    
   NoteBloc({
     required GetPDFNotes  GetPDFNotes,
     required UploadPDFNotes uploadPDFnotes,
@@ -52,7 +52,7 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
       fileName: event.fileName,
       lessonplanUpload:event.lessonplanUpload,
       generatedAt: event.generatedAt,
-       
+      schoolId: event.schoolId,
     ));
 
     result.fold(
@@ -77,6 +77,8 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
     );
   }
 
+
+
   // Handler for uploading notes
   Future<void> _onNoteUpload(
     NotesUploadNotes event,
@@ -95,6 +97,7 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
       Subject: event.Subject,
       updatedAt: event.updatedAt,
       lessonNote: event.lessonNote,
+      schoolId: event.schoolId,
     ));
 
     result.fold(

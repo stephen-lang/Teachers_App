@@ -19,7 +19,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final passwordController = TextEditingController();
   final emailController = TextEditingController();
   final nameController = TextEditingController();
- String? selectedRole;
+  final TextEditingController schoolCodeController = TextEditingController();
+  final TextEditingController schoolNameController = TextEditingController();
+
+  String? selectedRole;
 
   final _formKey = GlobalKey<FormState>();
   IconData iconPassword = CupertinoIcons.eye_fill;
@@ -37,6 +40,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     passwordController.dispose();
     emailController.dispose();
     nameController.dispose();
+    schoolCodeController.dispose();
+    schoolNameController.dispose();
+
     super.dispose();
   }
 
@@ -45,6 +51,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthSignUpSuccess) {
+
+          setState(() {
+          signUpRequired = false; // stop loading spinner
+        });
+
+        // Clear all fields
+        emailController.clear();
+        passwordController.clear();
+        nameController.clear();
+        schoolCodeController.clear();
+        schoolNameController.clear();
+        selectedRole = null;
+        
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text("User signed up successfully"),
@@ -53,8 +72,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
           );
 
           /* Navigator.of(context).pushReplacement(
-    MaterialPageRoute(builder: (context) => const SignInScreen()),
-  );*/
+     MaterialPageRoute(builder: (context) => const SignInScreen()),
+      );*/
           DefaultTabController.of(context).animateTo(0);
         } else if (state is AuthLoading) {
           setState(() {
@@ -80,6 +99,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             password: passwordController.text,
                             displayName: nameController.text,
                             role: selectedRole ?? '',
+                            schoolId: schoolCodeController.text,
                           ),
                         );
 
@@ -284,7 +304,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           borderRadius: BorderRadius.circular(8)),
                       hintText: 'Select Role',
                     ),
-                    items: ['Teacher', 'Headmaster'].map((role) {
+                    items: ['teacher', 'Headmaster'].map((role) {
                       return DropdownMenuItem(
                         value: role,
                         child: Text(role),
@@ -305,7 +325,49 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     },
                   ),
                 ),
-                
+                const SizedBox(height: 10),
+                if (selectedRole == 'Headmaster')
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: MyTextField(
+                        controller: schoolNameController,
+                        hintText: 'Enter School Name',
+                        obscureText: false,
+                        keyboardType: TextInputType.text,
+                        prefixIcon: const Icon(CupertinoIcons.building_2_fill),
+                        validator: (val) {
+                          if (selectedRole == 'Headmaster' &&
+                              (val == null || val.trim().length < 3)) {
+                            return 'Enter a valid school name';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ),
+                if (selectedRole == 'teacher')
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: MyTextField(
+                        controller: schoolCodeController,
+                        hintText: 'Enter School Code',
+                        obscureText: false,
+                        keyboardType: TextInputType.text,
+                        prefixIcon: const Icon(CupertinoIcons.building_2_fill),
+                        validator: (val) {
+                          if (selectedRole == 'teacher' &&
+                              (val == null || val.isEmpty)) {
+                            return 'Please enter your school code';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                 !signUpRequired
                     ? SizedBox(
@@ -316,10 +378,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 context.read<AuthBloc>().add(
                                       //2:04:54 -video time
                                       AuthSignUp(
-                                        email: emailController.text,
-                                        password: passwordController.text,
-                                        displayName: nameController.text,
+                                        email: emailController.text.trim(),
+                                        password:
+                                            passwordController.text.trim(),
+                                        displayName: nameController.text.trim(),
                                         role: selectedRole ?? '',
+                                        schoolId: selectedRole == 'teacher'
+                                            ? schoolCodeController.text.trim()
+                                            : null, // 👈 Only for teachers
+                                        schoolName: selectedRole == 'Headmaster'
+                                            ? schoolNameController.text.trim()
+                                            : null, // 👈 Only for headmasters
                                       ),
                                     );
 

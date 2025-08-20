@@ -6,7 +6,9 @@ class Notespdfmodel extends notespdfEntity {
       required super.posterId,
       required super.fileName,
       required super.generatedAt, 
-      required super.lessonplanUpload});
+      required super.lessonplanUpload,
+      required super.schoolId,
+});
   Map<String, dynamic> toDocument() {
     return {
       'Pdfid': Pdfid,
@@ -14,6 +16,7 @@ class Notespdfmodel extends notespdfEntity {
       'fileName': fileName,
       'generatedAt': generatedAt,
       'lessonplanUpload': lessonplanUpload,
+      'schoolId':schoolId,
     };
   }
 
@@ -24,6 +27,7 @@ class Notespdfmodel extends notespdfEntity {
     String? fileName,
     String? lessonplanUpload,
     DateTime? generatedAt,
+    String? schoolId,
   }) {
     return Notespdfmodel(
       Pdfid: Pdfid ?? this.Pdfid,
@@ -31,6 +35,7 @@ class Notespdfmodel extends notespdfEntity {
       fileName: fileName ?? this.fileName,
       lessonplanUpload: lessonplanUpload ?? this.lessonplanUpload,
       generatedAt: generatedAt ?? this.generatedAt,
+      schoolId:schoolId?? this.schoolId,
     );
   }
 
@@ -42,6 +47,7 @@ class Notespdfmodel extends notespdfEntity {
       fileName: entity.fileName,
       lessonplanUpload:entity.lessonplanUpload,
       generatedAt: entity.generatedAt,
+      schoolId:entity.schoolId,
     );
   }
 
@@ -52,7 +58,8 @@ class Notespdfmodel extends notespdfEntity {
     posterId: doc['posterId'],
     fileName: doc['fileName'],
     lessonplanUpload: doc['lessonplanUpload'],
-    generatedAt: doc['generatedAt']
+    generatedAt: doc['generatedAt'],
+    schoolId:doc['schoolId']
     );
   }
 }

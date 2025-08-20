@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:teacherapp_cleanarchitect/core/common/cubits/app_user/app_user_cubit_cubit.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/pages/WelcomeScreen.dart';
-import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/note_bloc.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/note/note_bloc.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/home/dashboard_notes.dart';
 import '../../controllers/auth_controller.dart';
 
@@ -68,7 +68,7 @@ class _DashState extends State<Dash> {
             BlocBuilder<AppUserCubit, AppUserCubitState>(
               builder: (context, state) {
                 if (state is AppUserLoggedIn) {
-                  final userName = state.loggedInUserCred.displayName ?? 'User';
+                  final userName = state.loggedInUserCred.displayName;
                   return Text(
                     "Hi, $userName!",
                     style: const TextStyle(

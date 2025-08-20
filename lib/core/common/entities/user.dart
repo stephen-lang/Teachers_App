@@ -1,16 +1,19 @@
-// user entity
- 
+// core/common/entities/user.dart
+
 class AppUser {
-  final String displayName ;
-  final String email;
   final String uid;
-  final String? role;
+  final String email;
+  final String displayName;
+  final String role;
+  final String? schoolId;
+  final String? schoolName;
 
-   
-
-    AppUser( {required this.displayName , required this.email, required this.uid ,required this.role});
-
- 
-   
+  AppUser({
+    required this.uid,
+    required this.email,
+    required this.displayName,
+    required this.role,
+    this.schoolId,
+    this.schoolName,
+  });
 }
-

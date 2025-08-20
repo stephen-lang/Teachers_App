@@ -26,8 +26,9 @@ final class NotesUploadNotes extends NoteEvent {
   final  String Subject;
   final  DateTime updatedAt;
   final  String? lessonNote;
+  final  String schoolId;
 
-  NotesUploadNotes({required this.posterId, required this.noteId, required this.grade, required this.indicators, required this.contentStandard, required this.substrand, required this.strand, required this.classSize, required this.Subject,   required this.updatedAt, required this.lessonNote});
+  NotesUploadNotes({required this.posterId, required this.schoolId,required this.noteId, required this.grade, required this.indicators, required this.contentStandard, required this.substrand, required this.strand, required this.classSize, required this.Subject,   required this.updatedAt, required this.lessonNote});
 
 
 }
@@ -43,6 +44,7 @@ final class NotesUploadPDFNotes extends NoteEvent {
   final  String fileName;
   final String lessonplanUpload;
   final  DateTime generatedAt;
+  final String schoolId;
 
-  NotesUploadPDFNotes({required this.Pdfid,  required this.lessonplanUpload, required this.posterId, required this.fileName, required this.generatedAt});
+  NotesUploadPDFNotes({required this.Pdfid, required this.schoolId, required this.lessonplanUpload, required this.posterId, required this.fileName, required this.generatedAt});
 }
