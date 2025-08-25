@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/components/my_text_field.dart';
-import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/HeadmasterPage/Headmaster_Page.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/Headmaster/presentation/Headmaster_Page.dart';
 import '../../../../core/common/cubits/app_user/app_user_cubit_cubit.dart';
 import '../../../notes/presentation/pages/nav/nav_bar.dart';
 
