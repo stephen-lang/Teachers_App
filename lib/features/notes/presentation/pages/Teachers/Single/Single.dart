@@ -4,7 +4,7 @@ import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:flutter/services.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/note/note_bloc.dart';
 
-import '../../../../../core/common/cubits/app_user/app_user_cubit_cubit.dart';
+import '../../../../../../core/common/cubits/app_user/app_user_cubit_cubit.dart';
 
 class SinglePage extends StatefulWidget {
   const SinglePage({super.key});

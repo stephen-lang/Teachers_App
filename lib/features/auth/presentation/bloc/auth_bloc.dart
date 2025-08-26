@@ -12,7 +12,7 @@ import 'package:teacherapp_cleanarchitect/features/auth/domain/usecases/user_sig
 import 'package:teacherapp_cleanarchitect/features/auth/domain/usecases/validate_school_code.dart';
 import 'package:teacherapp_cleanarchitect/main.dart';
 
-import '../../../notes/presentation/pages/nav/nav_bar.dart';
+import '../../../notes/presentation/pages/Teachers/nav/nav_bar.dart';
 import '../../domain/usecases/create_school_usecase.dart';
 
 part 'auth_event.dart';

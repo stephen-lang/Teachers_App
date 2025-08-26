@@ -8,8 +8,8 @@ import 'package:pdf_render/pdf_render.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:flutter/services.dart';
 
-import '../../../../../core/common/cubits/app_user/app_user_cubit_cubit.dart';
-import '../../bloc/note/note_bloc.dart';
+import '../../../../../../core/common/cubits/app_user/app_user_cubit_cubit.dart';
+import '../../../bloc/note/note_bloc.dart';
 
 class UploadPage extends StatefulWidget {
   const UploadPage({super.key});

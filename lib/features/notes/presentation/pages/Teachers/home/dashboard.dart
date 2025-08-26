@@ -8,8 +8,8 @@ import 'package:teacherapp_cleanarchitect/core/common/cubits/app_user/app_user_c
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/pages/WelcomeScreen.dart';
 import 'package:teacherapp_cleanarchitect/features/notes/presentation/bloc/note/note_bloc.dart';
-import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/home/dashboard_notes.dart';
-import '../../controllers/auth_controller.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/Teachers/home/dashboard_notes.dart';
+import '../../../controllers/auth_controller.dart';
 
 class Dash extends StatefulWidget {
   final String userName;

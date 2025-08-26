@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:teacherapp_cleanarchitect/features/auth/presentation/pages/SignIn_Page.dart';
 
 //import '../../../notes/presentation/pages/home/dashboard.dart';
-import '../../../notes/presentation/pages/nav/nav_bar.dart';
+import '../../../notes/presentation/pages/Teachers/nav/nav_bar.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});

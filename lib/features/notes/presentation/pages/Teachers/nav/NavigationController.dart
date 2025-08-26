@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/Single/Single.dart';
-import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/chat/chat.dart';
-import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/home/dashboard.dart';
-import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/upload/upload.dart';
- import '../../controllers/auth_controller.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/Teachers/Single/Single.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/Teachers/chat/chat.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/Teachers/home/dashboard.dart';
+import 'package:teacherapp_cleanarchitect/features/notes/presentation/pages/Teachers/upload/upload.dart';
+ import '../../../controllers/auth_controller.dart';
 
 class NavigationController extends GetxController {
   final Rx<int> selectedIndex = 0.obs;
